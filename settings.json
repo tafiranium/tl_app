@@ -1,5 +1,5 @@
 {
-  "files": ["tables"],
+  "files": ["tables", "templates", "button", "time", "content"],
   "points": {
     "Вернадка":      true,
     "Красногорск":  false,
