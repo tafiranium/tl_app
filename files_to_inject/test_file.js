@@ -3,4 +3,3 @@ function red() {
   return red
 }
 console.log("Function: GetTables() is started!")
-return red()
