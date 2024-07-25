@@ -1,1 +1,1 @@
-return console.log(a * b)
+return document.querySelector(a)
