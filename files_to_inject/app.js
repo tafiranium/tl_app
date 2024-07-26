@@ -15,7 +15,7 @@ async function GetTables(settings) {
 
     function st(n, all=false) {
         if (all) {return document.querySelectorAll(t["sel"][n])} 
-        else {return document.querySelector(t["sel"][n])}
+        else     {return document.querySelector(t["sel"][n])}
     }
 
     let table_detail_view =       st(0)
