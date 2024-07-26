@@ -11,6 +11,10 @@ async function get_config(salt, type=true) {
 class Tables {
 
     construct(tables_settings) {
+        main()
+    }
+
+    async function main() {
         this.cfg = tables_settings
         this.tables = await allTables()
         this.formatted = [
