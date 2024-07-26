@@ -13,9 +13,12 @@ async function GetTables(settings) {
 
     const t = await settings["tables"]
     console.log(settings)
+
     function st(n, all=false) {
-        if (all) {return document.querySelector(t["sel"][n])} else {return document.querySelectorAll(t["sel"][n])}
+        if (all) {return document.querySelector(t["sel"][n])} 
+        else {return document.querySelectorAll(t["sel"][n])}
     }
+
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
     let all_items =               st(2, true)
@@ -24,6 +27,7 @@ async function GetTables(settings) {
     async function GetDetails() {
 
         async function detail_table(n, to, inner=true) {
+            console.log(table_detail_view)
             let body = await table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)
             if (inner) {return body.innerHTML} else {return body} 
         }
