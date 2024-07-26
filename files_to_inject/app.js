@@ -12,7 +12,6 @@ async function get_config(salt, type=true) {
 async function GetTables(settings) {
 
     const t = await settings["tables"]
-    console.log(settings)
 
     function st(n, all=false) {
         if (all) {return document.querySelectorAll(t["sel"][n])} 
@@ -21,8 +20,7 @@ async function GetTables(settings) {
 
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
-    let all_items =               st(2, true)
-    console.log(table_detail_view, table_price_detail_view, all_items)
+    let all_items =         st(2, true)
 
     async function GetDetails() {
 
@@ -39,8 +37,6 @@ async function GetTables(settings) {
             let d = details[key]
             send[key] = await detail_table(d[0], d[1], d[2])
         }
-
-        console.log(send, details)
         return send
     }
 
@@ -72,13 +68,12 @@ async function GetTables(settings) {
     function GetItemTable() {
 
         let send = {}     
-        console.log(all_items)
-        // получение информации о товаре
+
         all_items.forEach((item) => {
             
             function isNumeric(num) {return !isNaN(num)}
             let all = item.querySelector("td:nth-child(2)").innerHTML 
-            let art = all.slice(0, all.indexOf(' '))            // артикул
+            let art = all.slice(0, all.indexOf(' '))       // артикул
 
             if (isNumeric(art)) {
 
@@ -98,9 +93,6 @@ async function GetTables(settings) {
 
         return send
     }
-
-    // функция возвращает отсортированную и пропарсенную информацию. (ничего лишнего)
-    console.log(GetDetails(), GetMoneyDetails(), GetItemTable())
     return [GetDetails(), GetMoneyDetails(), GetItemTable()]
 }
 
@@ -312,10 +304,13 @@ async function run_vp_extention_2345() {
     const settings = await get_config("settings.json")
     console.log(settings)
     const all_tables_sorted = await GetTables(settings)
-    const traffic = all_tables_sorted[0]["traffic"]
-    
-    // "01.02.24, 24:00:00" ==> ["01.02.24", "24:00:00"]
+    console.log(all_tables_sorted)
     const end_time_to_send = await GetTime(all_tables_sorted[0]["datetime"].split(", "))
+    console.log(end_time_to_send)
+    const traffic = all_tables_sorted[0]["traffic"]
+    console.log(traffic)
+    
+    
     
     
 
