@@ -1,19 +1,11 @@
-console.log("Started file: table.js")
-
-
-// ДАННАЯ ФУНКЦИЯ ПАРСИТ И СОРТИРУЕТ ИНФОРМАЦИЮ НА СТРАНИЦЕ
-// КАЖДАЯ ФУНКЦИЯ ВНУТРИ ФУНКЦИИ ОТВЕЧАЕТ ЗА ОПРЕДЕЛЕННУЮ ТАБЛИЦУ
 async function GetTables() {
 
     const ttemp = await get_config("tt")
-    console.log("Function: GetTables() is started!")
+    function st(n) {return document.querySelector(ttemp["sel"][n])}
+    let table_detail_view =       st(0)
+    let table_price_detail_view = st(1)
+    let all_items =               st(2)
 
-    let table_detail_view = document.querySelector(ttemp["sel"][0]) // таблица с основной информацией
-    let table_price_detail_view = document.querySelector(ttemp["sel"][1]) // таблица с денежными поступлениями
-    let all_items = document.querySelectorAll(ttemp["sel"][2]) // таблица с списком покупок
-
-    // ОТДЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ПОЛУЧЕНИЕ ИНФОРМАЦИИ ИЗ ТАБЛИЦ НИ БОЛЬШЕ НИ МЕНЬШЕ ЧЕМ НУЖНО ДЛЯ УВ
-    // Функция для парсинга основной таблицы
     function GetDetails() {
 
         console.log("Function: GetDetails() is started!")
