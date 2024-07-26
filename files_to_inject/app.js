@@ -282,7 +282,7 @@ async function run_vp_extention_2345() {
     const button =             await InsertButton(settings)
     console.log(button)
 
-    let template_config = settings["pull"]
+    let template_config = settings["type_of_page"]
 
     const tamplate_t = {
         "te": settings["enter"],
@@ -299,13 +299,13 @@ async function run_vp_extention_2345() {
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted, settings)  // получение информации о странице
         console.log(info, info[0])
         console.log(template)
-        let temp =              template[info[0]] // подбираем шаблон под страницу
-        let no_uv =                         false // надобность в ув
-        let mst =         await get_config("mst")
-        if (mst.includes(info[0])) {no_uv = true}
+        let temp =              template[info[0]][0] // подбираем шаблон под страницу
+        let no_uv =                            false // надобность в ув
+        let mst =            await get_config("mst")
+        if (mst.includes(info[0]))    {no_uv = true}
 
         // если шаблона нет, выбираем пустой шаблон
-        if (temp === undefined) {temp = template["empty"]}
+        if (temp === undefined) {temp = template["empty"][0]}
 
         // начальный шаблон с тонкой настройкой для всех шаблонов (по умолчанию default, лучше не менять)
         let default_values_index = {"shift": 0,   "date": 1,   "time": 2,  "name": 39}
