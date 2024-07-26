@@ -13,10 +13,12 @@ async function GetTables(settings) {
 
     const t = await settings["tables"]
     console.log(settings)
-    function st(n) {return document.querySelector(t["sel"][n])}
+    function st(n, all=false) {
+        if (all) {return document.querySelector(t["sel"][n])} else {return document.querySelectorAll(t["sel"][n])}
+    }
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
-    let all_items =               st(2)
+    let all_items =               st(2, true)
     console.log(table_detail_view, table_price_detail_view, all_items)
 
     function GetDetails() {
