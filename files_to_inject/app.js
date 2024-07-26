@@ -305,7 +305,7 @@ async function run_vp_extention_2345() {
     console.log(settings)
     const all_tables_sorted = await GetTables(settings)
     console.log(all_tables_sorted)
-    const end_time_to_send = GetTime(all_tables_sorted[0]["datetime"].split(", "))
+    const end_time_to_send = GetTime(await all_tables_sorted[0]["datetime"].split(", "))
     console.log(end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
     console.log(traffic)
