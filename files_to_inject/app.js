@@ -96,22 +96,21 @@ async function GetTables(settings) {
     return [await GetDetails(), await GetMoneyDetails(), await GetItemTable()]
 }
 
-async function check_list_uv_234(traffic, template, all_tables_sorted) {
-    
-    console.log(await all_tables_sorted)
+async function check_list_uv_234(traffic, template, all_tables_sorted, settings) {
+    let t = settings["type_of_page"]
     let check_list_uv = {
-        "buyer": !(template["tb"][traffic] === undefined),
-        "market": !(template["tm"][traffic] === undefined),
-        "shop": !(template["ts"][traffic] === undefined),
-        "takeup": (template["ts"][traffic] != undefined),
-        "open": ((await all_tables_sorted[2][0] != undefined)),
-        "return": (await all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
+        "buyer":    (t["buyer"][1][traffic] != undefined),
+        "market":   (t["market"][1][traffic] != undefined),
+        "shop":     (t["shop"][1][traffic] != undefined),
+        "takeup":   (t["shop"][1][traffic] != undefined),
+        "open": (all_tables_sorted[2][0] != undefined),
+        "return": (all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
         "no_item": !!((template["ni"].includes(traffic)) & 
-                    ((Object.keys(await all_tables_sorted[2])[0] == 0)) & 
+                    ((Object.keys(all_tables_sorted)[0] == 0)) & 
                     (Object.keys(await all_tables_sorted[2]).length <= 1)),
 
-        "enter": (template["te"].includes(traffic)),
-        "dc": (await all_tables_sorted[0]["dc"] != "Не задан")
+        "enter": (settings["enter"].includes(traffic)),
+        "dc": ((all_tables_sorted[0]["dc"] != "Не задан") & )
     }
 
     if (check_list_uv["open"] == true) {
@@ -127,24 +126,12 @@ async function check_list_uv_234(traffic, template, all_tables_sorted) {
         return ["return", send];
 
     } else {
-        if (check_list_uv["open"]) {
-            return ["open", send]
-        }
-        if (check_list_uv["no_item"]) {
-            return ["no_item", send] ;
-        }
-        else if (check_list_uv["buyer"]) {
-            return ["buyer", send]
-        }
-        else if (check_list_uv["market"]) {
-            return ["market", send]
-        }
-        else if (check_list_uv["shop"]) {
-            return ["shop", send]
-        }
-        else if (check_list_uv["takeup"]) {
-            return ["takeup", send]
-        }
+        if      (check_list_uv["open"])     {return ["open", send]   }
+        if      (check_list_uv["no_item"])  {return ["no_item", send]}
+        else if (check_list_uv["buyer"])    {return ["buyer", send]  }
+        else if (check_list_uv["market"])   {return ["market", send] }
+        else if (check_list_uv["shop"])     {return ["shop", send]   }
+        else if (check_list_uv["takeup"])   {return ["takeup", send] }
     }
 }
 
@@ -304,6 +291,7 @@ async function run_vp_extention_2345() {
     const settings = await get_config("settings.json")
     console.log("settings", settings)
     const all_tables_sorted = await GetTables(settings)
+    console.log(all_tables_sorted)
     const end_time_to_send = GetTime(await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time: end_time_to_send")
     const traffic = all_tables_sorted[0]["traffic"]
@@ -363,8 +351,6 @@ async function run_vp_extention_2345() {
             default_values_insert(temp[0])
         }
 
-        // если в массиве 4 элемента то на странице, где какой либо из элементов
-        // отключен не будут отображаться вовсе.
         else if (Object.keys(temp[0]).length === 4) {default_values_insert(temp[0])}
         
         vp_list[3]                                                           = temp[1][0]    // вход 
@@ -391,38 +377,27 @@ async function run_vp_extention_2345() {
                 // если надо фильтровать
                 if (temp[3][3] == 1) {
                     if (!(settings["stop"].includes(art))) {
-                        
                         desc.push(items[art]["desc"])
                         arts.push(art)
-
                     } 
 
-                // в другом случае просто пропускаем все товары
                 } else {
                     desc.push(items[art]["desc"])
                     arts.push(art)
                 }
-
             } 
 
             if (temp[3][1] != 1) {desc = []}
-
-            // если нужен комментарий
             let comment_245 = all_tables_sorted[0]["comment"]
             if (temp[3][4] == 1 & !(["Не задан", ""].includes(comment_245))) {desc.push(comment_245)}
-
-            // если комментарий вовсе не нужен
             vp_list[26] = desc.join(" ")
-
             vp_list[29] = arts.join("; ") 
+
             if (temp[3][2] == -1) {vp_list[29] = temp[3][2]}
 
-            // если -1 не показывет, если 0 то все обазначает 0
             if (temp[3][0] != 1) {
                 vp_list[27] = temp[3][0]
                 vp_list[28] = temp[3][0]
-            
-            // если 1 то показывет количество товаров
             } else {
                 vp_list[27] = 1
                 vp_list[28] = arts.length
