@@ -99,15 +99,14 @@ async function GetTables(settings) {
 async function check_list_uv_234(traffic, template, all_tables_sorted, settings) {
     let t = settings["type_of_page"]
     let check_list_uv = {
-        "buyer":    (t["buyer"][1][traffic] != undefined),
+        "buyer":    (t["buyer"][1][traffic] != undefined ),
         "market":   (t["market"][1][traffic] != undefined),
-        "shop":     (t["shop"][1][traffic] != undefined),
-        "takeup":   (t["shop"][1][traffic] != undefined),
-        "open": (all_tables_sorted[2][0] != undefined),
-        "return": (all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
-        "no_item": !!((template["ni"].includes(traffic)) & 
-                    ((Object.keys(all_tables_sorted)[0] == 0)) & 
-                    (Object.keys(await all_tables_sorted[2]).length <= 1)),
+        "shop":     (t["shop"][1][traffic] != undefined  ),
+        "takeup":   (t["shop"][1][traffic] != undefined  ),
+        "open":     (all_tables_sorted[2][0] != undefined),
+        "return":   (all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
+        "no_item":  !!((template["ni"].includes(traffic)) & ((Object.keys(all_tables_sorted)[0] == 0)) & 
+                                    (Object.keys(await all_tables_sorted[2]).length <= 1)),
 
         "enter": (settings["enter"].includes(traffic)),
         "dc": ((all_tables_sorted[0]["dc"] != "Не задан"))
