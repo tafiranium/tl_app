@@ -14,6 +14,7 @@ async function get_config(file) {
 async function GetTables(settings) {
 
     const t = await settings["tables"]
+    console.log(t)
     function st(n) {return document.querySelector(t["sel"][n])}
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
