@@ -287,7 +287,7 @@ async function run_vp_extention_2345() {
         "te": settings["enter"],
         "ts": settings["type_of_page"]["shop"][1],
         "tm": settings["type_of_page"]["market"][1],
-        "ni": settings["type_of_page"]["not_item"][1],
+        "ni": settings["type_of_page"]["no_item"][1],
         "tb": settings["type_of_page"]["buyer"][1]
     }
     
