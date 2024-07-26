@@ -13,7 +13,7 @@ async function get_config(file) {
 
 async function GetTables(settings) {
 
-    const t = settings["tables"]
+    const t = await settings["tables"]
     function st(n) {return document.querySelector(t["sel"][n])}
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
@@ -91,7 +91,7 @@ async function GetTables(settings) {
 
             }
         })
-        
+
         return send
     }
 
