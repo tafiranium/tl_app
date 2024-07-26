@@ -171,7 +171,7 @@ async function ConnectCopyToButton(button, text_to_copy="Тестовый тек
 console.log("Started file: time.js")
 // ДАННАЯ ФУНКЦИЯ ФОРМАТИРУЕТ ВРЕМЯ И ЗАНИМАЕТСЯ ПРОВЕРКОЙ ТИПА СМЕНЫ
 
-async function GetTime(tm, start=10, end=22) { 
+function GetTime(tm, start=10, end=22) { 
 // ["01.01.24", "23:00:21"] / время начала смены / время конца смены
     
     console.log("Function: GetTime(tm, start, end) is started!")
@@ -305,7 +305,7 @@ async function run_vp_extention_2345() {
     console.log(settings)
     const all_tables_sorted = await GetTables(settings)
     console.log(all_tables_sorted)
-    const end_time_to_send = await GetTime(all_tables_sorted[0]["datetime"].split(", "))
+    const end_time_to_send = GetTime(all_tables_sorted[0]["datetime"].split(", "))
     console.log(end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
     console.log(traffic)
