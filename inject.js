@@ -1,1 +1,0 @@
-return document.querySelector(a)
