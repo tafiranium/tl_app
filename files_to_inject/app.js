@@ -22,8 +22,8 @@ async function GetTables(settings) {
     function GetDetails() {
 
         function detail_table(n, to, inner=true) {
-            if (inner) {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`).innerHTML} 
-            else {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)} 
+            if (inner)  {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`).innerHTML} 
+            else        {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)} 
         }
 
         send = {}
@@ -32,7 +32,6 @@ async function GetTables(settings) {
         for (key in details) {
             let d = details[key]
             send[key] = detail_table(d[0], d[1], d[2])
-            console.log(detail_table(d[0], d[1], d[3]), d[0], d[1], d[2])
         }
 
         console.log(send, details)
@@ -67,7 +66,7 @@ async function GetTables(settings) {
     function GetItemTable() {
 
         let send = {}     
-
+        console.log(all_items)
         // получение информации о товаре
         all_items.forEach((item) => {
             
@@ -100,7 +99,6 @@ async function GetTables(settings) {
 }
 
 async function check_list_uv_234(traffic, template, all_tables_sorted) {
-    
     
     console.log(await all_tables_sorted)
     let check_list_uv = {
