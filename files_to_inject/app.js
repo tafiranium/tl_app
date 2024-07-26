@@ -307,7 +307,7 @@ async function run_vp_extention_2345() {
     const end_time_to_send = GetTime(await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time: end_time_to_send")
     const traffic = all_tables_sorted[0]["traffic"]
-    console.log("trafic:  " + traffic)
+    console.log("trafic: " + traffic)
 
     let template_config = settings["pull"]
     const tamplate_t = {
