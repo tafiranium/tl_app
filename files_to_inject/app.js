@@ -1,36 +1,27 @@
-async function get_config(salt, type=true) {
-    let key = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v"
-    let response = await fetch(window.atob(key) + salt);
-    if (response.ok) {
-        if (type) {return await response.json();} else {return await response.text();}
+console.log("Started file: templates.js")
+
+async function get_config(file) {
+    let response = await fetch(`https://raw.githubusercontent.com/tafiranium/point_of_love/main/${file}.json`);
+
+    if (response.ok) { // если HTTP-статус в диапазоне 200-299
+    // получаем тело ответа (см. про этот метод ниже)
+        return await response.json();
     } else {
-        console.log("Ошибка HTTP: " + response.status);
+        alert("Ошибка HTTP: " + response.status);
     }
 }
 
-class Tables {
+async function GetTables() {
 
-    construct(tables_settings) {
-        main()
-    }
+    const ttemp = await get_config("tt")
+    function st(n) {return document.querySelector(ttemp["sel"][n])}
+    let table_detail_view =       st(0)
+    let table_price_detail_view = st(1)
+    let all_items =               st(2)
 
-    async function main() {
-        this.cfg = tables_settings
-        this.tables = await allTables()
-        this.formatted = [
-            await this.GetDetails(), 
-            await this.GetMoneyDetails(), 
-            await this.GetItemTable()
-        ]
-    }
-    
-    async allTables() {
-        const ttemp = await get_config("tt")
-        function st(n) {return document.querySelector(this.cfg["sel"][n])}
-        return [st(0), st(1), st(3)] 
-    }
+    function GetDetails() {
 
-    async GetDetails() {
+        console.log("Function: GetDetails() is started!")
 
         function detail_table(n, to, inner=true) {
             if (inner) {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`).innerHTML} 
@@ -38,55 +29,83 @@ class Tables {
         }
 
         send = {}
-        let details = this.cfg["details"]
+
+        let details = ttemp["details"]
         for (key in details) {
             let d = details[key]
             send[key] = detail_table(d[0], d[1], d[2])
             console.log(detail_table(d[0], d[1], d[3]), d[0], d[1], d[2])
         }
-
+        console.log(send, ttemp, details)
         return send
     }
 
-    async function GetMoneyDetails() {
+    // получение деталей об получение оплаты (нал безнал сбп)
+    function GetMoneyDetails() {
+
+        console.log("Function: GetMoneyDetails() is started!")
 
         function money_table(n) {
             return table_price_detail_view.querySelector(`tr:nth-child(${n}) td`
                 ).innerHTML.replace(" ", "").replace("руб.", "").split(".")[0]
         }
+
+        let temp = {
+            cash:    money_table(1), // нал
+            no_cash: money_table(2), // безнал
+            sbp:     money_table(3)  // сбп
+        }
         
-        for (let key in {cash: money_table(1), no_cash: money_table(2), sbp: money_table(3)}) {
+        // если нет определенного типа оплаты то -1 (пустота)
+        for (let key in temp) {
             if (temp[key]=="0") {
                 temp[key]=-1
             }
         } 
-
         return temp
-    } 
+    }
 
-    async function GetItemTable() {
+    // получение таблицы с товарами
+    function GetItemTable() {
 
         console.log("Function: GetItemTable() is started!")
 
         let send = {}     
 
+        // получение информации о товаре
         all_items.forEach((item) => {
             
-            function isNumeric(num) {return !isNaN(num)}
+            function isNumeric(num){
+                return !isNaN(num)
+              }
+            // строка с артикулом название и описанием
             let all = item.querySelector("td:nth-child(2)").innerHTML 
-            let art = all.slice(0, all.indexOf(' ')) // артикул
+
+            // все что мы можем сделать отделить артикул и описание больше и не надо
+            let art = all.slice(0, all.indexOf(' '))            // артикул
 
             if (isNumeric(art)) {
 
                 let name = all.slice(all.indexOf(' '), all.length)  // описание
-                if (name.length > 27) {name = name.slice(0, 27)}
+
+                // в гугл таблицах максимальная длина строки 27 символов режем описание для умещения контента
+                if (name.length > 27) {
+                    name = name.slice(0, 27)
+                }
+
+                // количество товара (переменная в коде простаивает может пригодится)
                 let count = item.querySelector("td:nth-child(3)").innerHTML.split(".")[0] 
+
+                // с ключем артикулом создаем словарь с описанием и количеством товара
                 send[art] = {"desc": name, "count": count}
 
             } else {
 
                 let name = all
+
+                // количество товара (переменная в коде простаивает может пригодится)
                 let count = item.querySelector("td:nth-child(3)").innerHTML.split(".")[0] 
+
                 send[0] = {"desc": name, "count": count}
 
             }
@@ -94,15 +113,381 @@ class Tables {
 
         return send
     }
+
+    // функция возвращает отсортированную и пропарсенную информацию. (ничего лишнего)
+    console.log(GetDetails(), GetMoneyDetails(), GetItemTable())
+    return [GetDetails(), GetMoneyDetails(), GetItemTable()]
 }
 
-class App {
-    construct() {
-        this.settings = await get_config("settings.json")
-        this.tables = await Tables(this.settings["tables"])
+async function check_list_uv_234(traffic, template, all_tables_sorted) {
+    
+    
+    console.log(await all_tables_sorted)
+    let check_list_uv = {
+        "buyer": !(template["tb"][traffic] === undefined),
+        "market": !(template["tm"][traffic] === undefined),
+        "shop": !(template["ts"][traffic] === undefined),
+        "takeup": (template["ts"][traffic] != undefined),
+        "open": ((await all_tables_sorted[2][0] != undefined)),
+        "return": (await all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
+        "no_item": !!((template["ni"].includes(traffic)) & 
+                    ((Object.keys(await all_tables_sorted[2])[0] == 0)) & 
+                    (Object.keys(await all_tables_sorted[2]).length <= 1)),
+
+        "enter": (template["te"].includes(traffic)),
+        "dc": (await all_tables_sorted[0]["dc"] != "Не задан")
+    }
+
+    if (check_list_uv["open"] == true) {
+        check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")
+    }
+
+    console.log(all_tables_sorted, await get_config("shops"), all_tables_sorted[0]["shop"])
+    let shops = await get_config("shops")
+
+    let send = [check_list_uv["enter"], check_list_uv["dc"], shops[all_tables_sorted[0]["shop"]]]
+
+    if (check_list_uv["return"]) {
+        return ["return", send];
+
+    } else {
+        if (check_list_uv["open"]) {
+            return ["open", send]
+        }
+        if (check_list_uv["no_item"]) {
+            return ["no_item", send] ;
+        }
+        else if (check_list_uv["buyer"]) {
+            return ["buyer", send]
+        }
+        else if (check_list_uv["market"]) {
+            return ["market", send]
+        }
+        else if (check_list_uv["shop"]) {
+            return ["shop", send]
+        }
+        else if (check_list_uv["takeup"]) {
+            return ["takeup", send]
+        }
     }
 }
 
-window.onload(async () => {
-    const app = new App()
-})
+
+console.log("Started file: button.js")
+// ДАННЫЙ СКРИПТ ДОЛЖЕН ЗАПУСКАТЬСЯ ПЕРВЫМ ДЛЯ КОРРЕКТНОЙ РАБОТЫ
+// ВСЕГО ПРИЛОЖЕНИЯ УВАЖИТЕЛЬНАЯ ПРОСЬБА ФАЙЛ MANIFEST НЕ ТРОГАТЬ
+
+// ДАННАЯ ФУНКЦИЯ ПРИВЯЗЫВАЕТ К КНОПКЕ КОПИРОВАНИЕ ЗАДАННОГО ТЕКСТА ИММИТАЦИЯ КОМАНДОЙ CTRL+C
+async function ConnectCopyToButton(button, text_to_copy="Тестовый текст не имеющий смысла, если ты это видишь значит в коде ошибка!") {
+    
+    console.log("Function:  ConnectCopyToButton(button, text_to_copy) is started!")
+    button.addEventListener("click", () => {
+        navigator.clipboard.writeText(text_to_copy)
+                .then(() => {
+                    console.log(`"${text_to_copy}" - скопировано в буфер обмена!`)
+                })
+                .catch(err => {
+                    console.log("Ошибка", err);
+                });
+    })  
+}
+
+console.log("Started file: time.js")
+// ДАННАЯ ФУНКЦИЯ ФОРМАТИРУЕТ ВРЕМЯ И ЗАНИМАЕТСЯ ПРОВЕРКОЙ ТИПА СМЕНЫ
+
+async function GetTime(tm, start=10, end=22) { 
+// ["01.01.24", "23:00:21"] / время начала смены / время конца смены
+    
+    console.log("Function: GetTime(tm, start, end) is started!")
+
+    function two(number) {
+        let n = number.toString().split("")
+        if (n.length == 1) {
+            return "0"+n[0]
+        } else {
+            return number.toString()
+        }
+    }
+
+    // разбиение строки даты на массив для форматирования для
+    // встроенного класса Date
+    let date = tm[0] 
+    date = date.split(".")
+    let obj = new Date(`${date[1]}.${date[0]}.${date[2]}`)
+
+    // разбиение строки даты на массив для форматирования для
+    // дальнейшего получения секунд для сравнения
+    let time = tm[1]
+    time = time.split(":")
+
+    // проверка на размер числа
+    if ((time[0].length != 1) & (time[0][0] == "0")) {time[0] = Number(time[0][1])}
+    else if (time[0].length == 1) {time[0] = Number(time[0][0])}
+    else {time[0] = Number(time[0])}
+    if (time[1][0] == "0") {time[1] = Number(time[1][1])}
+    if (time[2][0] == "0") {time[2] = Number(time[2][1])}
+
+    // итоговое форматирование
+    let time_to_send = `${two(time[0])}:${two(time[1])}`
+
+    // получение секунд для сравнения
+    sec_time = time[0]*60*60 + time[1]*60 + time[2]*1
+    sec_end = 60*60*end 
+    sec_start = 60*60*start
+    day_time = 24*60*60
+
+    console.log(sec_time, sec_end, day_time)
+
+    let type_of_shift = -1 // проверочное число
+    if (((sec_time > sec_end) & (sec_time > sec_start)) || ((sec_time < sec_end) & (sec_time < sec_start))) {
+        // ночная смена вроде не понятно зачем здесь эта функция
+        type_of_shift = false
+
+        // но мы делаем дату на 1 день меньше так как это все еще твоя смена брат
+        if (((sec_time > sec_end) & (sec_time < day_time))) {
+            type_of_shift = false
+            console.log("test")
+        } else {
+            obj.setDate(obj.getDate() - 1)
+            type_of_shift = false
+        }
+
+    } else if ((sec_time < sec_end) & (sec_time >= sec_start)) {
+        type_of_shift = true // дневная смена радуйся проценту как и твой писюн)
+    }
+
+    // получение итоговой даты 
+    let year = obj.getFullYear()
+    let month = obj.getMonth()+1
+    let day = obj.getDate()
+    let date_to_send = `${two(day)}.${two(month)}.${year}`
+
+    // [true, "01.01.24", "23:30"]
+    console.log(type_of_shift, date_to_send, time_to_send)
+    return [type_of_shift, date_to_send, time_to_send]
+}
+
+async function InsertButton() {   
+
+    const button_config = await get_config("button")
+    let mouse_mas = button_config[6]
+    let arg = button_config[0]
+    
+    // форматирование css для внедрения на сайт одной строкой
+    function getCss(start, end) {
+        let css = "";
+        temp = start;
+
+        for (let key in temp) {
+            if (Object.keys(end).includes(key)) {
+                css = css += `${key}:${end[key]};`
+            } else {css = css += `${key}:${temp[key]};`}
+        }; return css;
+    }
+
+    // Создание кнопки с тегом SPAN (c тегом button в разных 
+    // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
+    let button = document.createElement("span")
+    button.innerHTML += button_config[3]
+    button.style = getCss(arg, arg)
+
+    Object.keys(mouse_mas).forEach(type => {
+        button.addEventListener(type, (e) => {
+            let t = mouse_mas[type]
+            e.target.style = getCss(
+                button_config[t[0]], 
+                button_config[t[1]]
+            );
+        })
+    });
+
+    button.classList.add(button_config[4])
+    document.querySelector(button_config[5]).appendChild(button)
+
+    // возвращает DOM element (кнопка, уже внедрена, 
+    // кнопку сохраняем для дальнейших манипуляций при желании)
+    return button
+}
+
+console.log("Started file: content.js!")
+const DEBUG_MODE = true
+
+// форматирование таблицы и ее отправка
+async function format_uv(table) {
+    for (let i=0; i<table.length; i++) {
+        if (table[i] == -1) {
+            table[i] = ""
+        }
+    }
+    let send = table.join("\t")
+    return send
+}
+
+async function run_vp_extention_2345() {
+
+    // размер УВ
+    const uv_size = 40
+    const all_tables_sorted = await GetTables()
+    const traffic = all_tables_sorted[0]["traffic"]
+    
+    // "01.02.24, 24:00:00" ==> ["01.02.24", "24:00:00"]
+    const end_time_to_send = await GetTime(all_tables_sorted[0]["datetime"].split(", "))
+    console.log(end_time_to_send)
+    
+
+    console.log("trafic: " + traffic)
+
+    let template_config = await get_config("pull")
+    const tamplate_t = {
+        "te": await get_config("et"),
+        "ts": await get_config("ts"),
+        "tm": await get_config("tm"),
+        "ni": await get_config("ni"),
+        "tb": await get_config("tb")
+    }
+    
+    // создание кнопки
+    const button = await InsertButton()
+    let STOP_LIST = await get_config("sp")
+
+    async function scan_template(template) {
+        // шаблоны для каждого из типа страниц
+        let vp_list = Array(uv_size).fill(-1)  // создание массива
+        
+        let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted)  // получение информации о странице
+        let temp = template[info[0]]    // подбираем шаблон под страницу
+        console.log(info)
+        let no_uv = false               // надобность в ув
+        let mst = await get_config("mst")
+        if (mst.includes(info[0])) {no_uv = true}
+
+        // если шаблона нет, выбираем пустой шаблон
+        if (temp === undefined) {temp = template["empty"]}
+
+        // начальный шаблон с тонкой настройкой для всех шаблонов (по умолчанию default, лучше не менять)
+        let default_values_index = {"shift": 0, "date": 1, "time": 2, "name": 39}
+        let default_values = {"shift": true, "date": true, "time": true, "name": true}
+        
+        const DAY_SHOP = info[1][2]
+        console.log(DAY_SHOP, info[1])
+
+        function default_values_insert(values) {
+
+            // если смена дневная "д" если нет "н"
+            if (default_values["shift"]) {
+                if (!DAY_SHOP) {
+                    if (end_time_to_send[0]) {vp_list[default_values_index["shift"]]="д"} 
+                    else {vp_list[default_values_index["shift"]]="н"}
+                } else {vp_list[default_values_index["shift"]]="д"}  
+            }
+
+            if (default_values["date"]) {vp_list[default_values_index["date"]] = end_time_to_send[1]}               // дата   
+            if (default_values["time"]) {vp_list[default_values_index["time"]] = end_time_to_send[2]}               // время 
+            if (default_values["name"]) {vp_list[default_values_index["name"]] = all_tables_sorted[0]["seller"] }   // имя продавца
+        }
+
+        // если в массиве один элемент default, то для страницы используются дефолтные настройки
+        if ((temp[0].length === 1) & (temp[0][0] === "default")) {
+            temp[0] = default_values
+            default_values_insert(temp[0])
+        }
+
+        // если в массиве 4 элемента то на странице, где какой либо из элементов
+        // отключен не будут отображаться вовсе.
+        else if (Object.keys(temp[0]).length === 4) {default_values_insert(temp[0])}
+        
+        vp_list[3]                                                           = temp[1][0]    // вход 
+        vp_list[4]                                                           = temp[1][3]    // не клиент 
+        if (!no_uv) {vp_list[tamplate_t["tb"][traffic]]                      = temp[1][1]}   // ув (5 - 16)
+        if (info[1][1]) {vp_list[17]                                         = temp[1][2]}   // дк
+        if (Object.keys(all_tables_sorted[2]).includes("636")) {vp_list[19]  = temp[1][2]}   // 636 проверка наличия
+        if (no_uv) {vp_list[21]                                              = temp[2][0]}   // учет заказов
+        if (no_uv) {vp_list[tamplate_t["tm"][traffic]]                       = temp[2][0]}   // заказы 24-25 ozon яндекс
+        if (no_uv) {vp_list[tamplate_t["ts"][traffic]]                       = temp[2][0]}   // заказы 22-23 самовывоз приложение
+
+        // все товары и их свойства
+        let items = all_tables_sorted[2]
+
+        // если список не пуст
+        if (Object.keys(items).length > 0) {
+
+            let desc = []
+            let arts = []
+
+            // проходимся по массиву
+            for (let art in items) {
+
+                
+                console.log(STOP_LIST)
+                // если надо фильтровать
+                if (temp[3][3] == 1) {
+                    if (!(STOP_LIST.includes(art))) {
+                        
+                        desc.push(items[art]["desc"])
+                        arts.push(art)
+                    } 
+
+                // в другом случае просто пропускаем все товары
+                } else {
+                    desc.push(items[art]["desc"])
+                    arts.push(art)
+                }
+
+            } 
+
+            if (temp[3][1] != 1) {desc = []}
+
+            // если нужен комментарий
+            let comment_245 = all_tables_sorted[0]["comment"]
+            if (temp[3][4] == 1 & !(["Не задан", ""].includes(comment_245))) {desc.push(comment_245)}
+
+            // если комментарий вовсе не нужен
+            vp_list[26] = desc.join(" ")
+
+            vp_list[29] = arts.join("; ") 
+            if (temp[3][2] == -1) {vp_list[29] = temp[3][2]}
+
+            // если -1 не показывет, если 0 то все обазначает 0
+            if (temp[3][0] != 1) {
+                vp_list[27] = temp[3][0]
+                vp_list[28] = temp[3][0]
+            
+            // если 1 то показывет количество товаров
+            } else {
+                vp_list[27] = 1
+                vp_list[28] = arts.length
+            }
+
+        }  
+
+        // нал безнал
+        cash_nocash = [all_tables_sorted[1]["cash"], (Number(all_tables_sorted[1]["no_cash"]) +  Number(all_tables_sorted[1]["sbp"]))]
+        if (cash_nocash[1] < 0) {cash_nocash[1] = -1}
+
+        // нал безнал сбп
+        cash_nocash_sbp = [all_tables_sorted[1]["cash"], all_tables_sorted[1]["no_cash"], all_tables_sorted[1]["sbp"]]
+        
+        // обычная оплата 
+        if (temp[4][0] === 1) {
+            vp_list[30] = cash_nocash_sbp[0]
+            vp_list[31] = cash_nocash_sbp[1]
+            vp_list[32] = cash_nocash_sbp[2]
+
+        // оплата заказа
+        } else if (temp[4][1] === 1) {
+            vp_list[33] = cash_nocash[0]
+            vp_list[34] = cash_nocash[1]
+
+        // возврат денег
+        } else if (temp[4][2] === 1) {
+            vp_list[37] = cash_nocash[0]
+            vp_list[38] = cash_nocash[1]
+        }
+        console.log(vp_list)
+        return format_uv(vp_list)
+    }
+
+    await ConnectCopyToButton(button, await scan_template(template_config))
+}
+
+run_vp_extention_2345()
