@@ -37,7 +37,7 @@ async function GetTables(settings) {
             let d = details[key]
             send[key] = await detail_table(d[0], d[1], d[2])
         }
-        return send
+        return await send
     }
 
     // получение деталей об получение оплаты (нал безнал сбп)
@@ -304,10 +304,8 @@ async function run_vp_extention_2345() {
     const settings = await get_config("settings.json")
     console.log(settings)
     const all_tables_sorted = await GetTables(settings)
-    let tsa = await all_tables_sorted
     const end_time_to_send = GetTime(
-        tsa[0]["datetime"].split(", ")
-    )
+        await all_tables_sorted[0]["datetime"].split(", "))
     console.log(end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
     console.log(traffic)
