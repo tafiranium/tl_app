@@ -21,11 +21,11 @@ async function GetTables(settings) {
     let all_items =               st(2, true)
     console.log(table_detail_view, table_price_detail_view, all_items)
 
-    function GetDetails() {
+    async function GetDetails() {
 
-        function detail_table(n, to, inner=true) {
-            if (inner)  {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`).innerHTML} 
-            else        {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)} 
+        async function detail_table(n, to, inner=true) {
+            let body = await table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)
+            if (inner) {return body.innerHTML} else {return body} 
         }
 
         send = {}
@@ -33,7 +33,7 @@ async function GetTables(settings) {
         let details = t["details"]
         for (key in details) {
             let d = details[key]
-            send[key] = detail_table(d[0], d[1], d[2])
+            send[key] = await detail_table(d[0], d[1], d[2])
         }
 
         console.log(send, details)
