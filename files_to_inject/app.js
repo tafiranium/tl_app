@@ -93,7 +93,7 @@ async function GetTables(settings) {
 
         return send
     }
-    return [GetDetails(), GetMoneyDetails(), GetItemTable()]
+    return [await GetDetails(), await GetMoneyDetails(), await GetItemTable()]
 }
 
 async function check_list_uv_234(traffic, template, all_tables_sorted) {
