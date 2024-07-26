@@ -270,25 +270,26 @@ async function format_uv(table) {
 
 async function run_vp_extention_2345() {
 
-    const settings = await get_config("settings.json")
+    const settings =      await get_config("settings.json")
     console.log("settings", settings)
-    const all_tables_sorted = await GetTables(settings)
+    const all_tables_sorted =     await GetTables(settings)
     console.log(all_tables_sorted)
-    const end_time_to_send = GetTime(await all_tables_sorted[0]["datetime"].split(", "))
+    const end_time_to_send = GetTime(
+        await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time: end_time_to_send")
     const traffic = all_tables_sorted[0]["traffic"]
     console.log("trafic: " + traffic)
-    const button = await InsertButton(settings)
+    const button =             await InsertButton(settings)
     console.log(button)
 
     let template_config = settings["pull"]
 
     const tamplate_t = {
         "te": settings["enter"],
-        "ts": settings["type_of_page"]["shop"][1],
-        "tm": settings["type_of_page"]["market"][1],
+        "ts": settings["type_of_page"]["shop"]   [1],
+        "tm": settings["type_of_page"]["market"] [1],
         "ni": settings["type_of_page"]["no_item"][1],
-        "tb": settings["type_of_page"]["buyer"][1]
+        "tb": settings["type_of_page"]["buyer"]  [1]
     }
     
     async function scan_template(template) {
