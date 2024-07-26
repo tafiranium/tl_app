@@ -48,20 +48,13 @@ async function GetTables(settings) {
                 ).innerHTML.replace(" ", "").replace("руб.", "").split(".")[0]
         }
 
-        let temp = {
-            cash:    money_table(1),
-            no_cash: money_table(2), 
-            sbp:     money_table(3) 
-        }
-        
+        let temp = {cash: money_table(1), no_cash: money_table(2), sbp: money_table(3) }
         // если нет определенного типа оплаты то -1 (пустота)
         for (let key in temp) {
             if (temp[key]=="0") {
                 temp[key]=-1
             }
-        } 
-
-        return temp
+        } return temp
     }
 
     // получение таблицы с товарами
@@ -92,39 +85,29 @@ async function GetTables(settings) {
         })
 
         return send
-    }
-    return [await GetDetails(), await GetMoneyDetails(), await GetItemTable()]
+    } return [await GetDetails(), await GetMoneyDetails(), await GetItemTable()];
 }
 
 async function check_list_uv_234(traffic, template, all_tables_sorted, settings) {
     let t = settings["type_of_page"]
     let check_list_uv = {
-        "buyer":    (t["buyer"][1][traffic] != undefined ),
+        "buyer":    (t["buyer"][1][traffic]  != undefined),
         "market":   (t["market"][1][traffic] != undefined),
-        "shop":     (t["shop"][1][traffic] != undefined  ),
-        "takeup":   (t["shop"][1][traffic] != undefined  ),
+        "shop":     (t["shop"][1][traffic]   != undefined),
+        "takeup":   (t["shop"][1][traffic]   != undefined),
         "open":     (all_tables_sorted[2][0] != undefined),
         "return":   (all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
         "no_item":  !!((template["ni"].includes(traffic)) & ((Object.keys(all_tables_sorted)[0] == 0)) & 
                                     (Object.keys(await all_tables_sorted[2]).length <= 1)),
-
         "enter": (settings["enter"].includes(traffic)),
-        "dc": ((all_tables_sorted[0]["dc"] != "Не задан"))
+        "dc": ((all_tables_sorted[0]["dc"] != "Не задан") & (all_tables_sorted[0]["buyer"] != "Не задан") &
+                (all_tables_sorted[0]["dc"] != "") & (all_tables_sorted[0]["buyer"] != ""))
     }
 
-    if (check_list_uv["open"] == true) {
-        check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")
-    }
+    if (check_list_uv["open"] == true) {check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")}
+    let send = [check_list_uv["enter"], check_list_uv["dc"], settings["shops"][all_tables_sorted[0]["shop"]]]
 
-    console.log(all_tables_sorted, await get_config("shops"), all_tables_sorted[0]["shop"])
-    let shops = await get_config("shops")
-
-    let send = [check_list_uv["enter"], check_list_uv["dc"], shops[all_tables_sorted[0]["shop"]]]
-
-    if (check_list_uv["return"]) {
-        return ["return", send];
-
-    } else {
+    if (check_list_uv["return"]) {return ["return", send];}     else {
         if      (check_list_uv["open"])     {return ["open", send]   }
         if      (check_list_uv["no_item"])  {return ["no_item", send]}
         else if (check_list_uv["buyer"])    {return ["buyer", send]  }
@@ -295,26 +278,26 @@ async function run_vp_extention_2345() {
     console.log("time: end_time_to_send")
     const traffic = all_tables_sorted[0]["traffic"]
     console.log("trafic: " + traffic)
+    const button = await InsertButton(settings)
+    console.log(button)
 
     let template_config = settings["pull"]
+
     const tamplate_t = {
         "te": settings["enter"],
-        "ts": settings[""],
-        "tm": await get_config("tm"),
-        "ni": await get_config("ni"),
-        "tb": await get_config("tb")
+        "ts": settings["type_of_page"]["shop"][1],
+        "tm": settings["type_of_page"]["market"][1],
+        "ni": settings["type_of_page"]["not_item"][1],
+        "tb": settings["type_of_page"]["buyer"][1]
     }
     
-    // создание кнопки
-    const button = await InsertButton(settings)
-
     async function scan_template(template) {
         // шаблоны для каждого из типа страниц
         let vp_list = Array(settings["add"][0]).fill(-1)  // создание массива
         
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted)  // получение информации о странице
-        let temp = template[info[0]]    // подбираем шаблон под страницу
         console.log(info)
+        let temp = template[info[0]]    // подбираем шаблон под страницу
         let no_uv = false               // надобность в ув
         let mst = await get_config("mst")
         if (mst.includes(info[0])) {no_uv = true}
