@@ -243,9 +243,9 @@ function GetTime(tm, start=10, end=22) {
     return [type_of_shift, date_to_send, time_to_send]
 }
 
-async function InsertButton() {   
+async function InsertButton(settings) {   
 
-    const button_config = await get_config("button")
+    const button_config = settings["button"]
     let mouse_mas = button_config[6]
     let arg = button_config[0]
     
@@ -302,31 +302,24 @@ async function format_uv(table) {
 async function run_vp_extention_2345() {
 
     const settings = await get_config("settings.json")
-    console.log(settings)
+    console.log("settings", settings)
     const all_tables_sorted = await GetTables(settings)
-    const end_time_to_send = GetTime(
-        await all_tables_sorted[0]["datetime"].split(", "))
-    console.log(end_time_to_send)
+    const end_time_to_send = GetTime(await all_tables_sorted[0]["datetime"].split(", "))
+    console.log("time": end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
-    console.log(traffic)
-    
-    
-    
-    
-
     console.log("trafic: " + traffic)
 
-    let template_config = await get_config("pull")
+    let template_config = settings["pull"]
     const tamplate_t = {
-        "te": await get_config("et"),
-        "ts": await get_config("ts"),
+        "te": settings["enter"],
+        "ts": settings[""],
         "tm": await get_config("tm"),
         "ni": await get_config("ni"),
         "tb": await get_config("tb")
     }
     
     // создание кнопки
-    const button = await InsertButton()
+    const button = await InsertButton(settings)
 
     async function scan_template(template) {
         // шаблоны для каждого из типа страниц
