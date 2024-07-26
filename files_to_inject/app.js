@@ -107,7 +107,7 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
     if (check_list_uv["open"] == true) {check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")}
     let send = [check_list_uv["enter"], check_list_uv["dc"], settings["points"][all_tables_sorted[0]["shop"]]]
 
-    if (check_list_uv["return"]) {return ["return", send];}     else {
+    if (check_list_uv["return"])     {return ["return", send];} else {
         if      (check_list_uv["open"])     {return ["open", send]   }
         if      (check_list_uv["no_item"])  {return ["no_item", send]}
         else if (check_list_uv["buyer"])    {return ["buyer", send]  }
@@ -297,7 +297,7 @@ async function run_vp_extention_2345() {
         let vp_list = Array(settings["add"][0]).fill(-1)  // создание массива
         
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted, settings)  // получение информации о странице
-        console.log(info)
+        console.log(info, info[0], template[info[0]])
         let temp =              template[info[0]] // подбираем шаблон под страницу
         let no_uv =                         false // надобность в ув
         let mst =         await get_config("mst")
