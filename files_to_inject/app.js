@@ -11,17 +11,16 @@ async function get_config(file) {
     }
 }
 
-async function GetTables() {
+async function GetTables(settings) {
 
-    const ttemp = await get_config("tt")
-    function st(n) {return document.querySelector(ttemp["sel"][n])}
+    const t = settings["tables"]
+    function st(n) {return document.querySelector(t["sel"][n])}
     let table_detail_view =       st(0)
     let table_price_detail_view = st(1)
     let all_items =               st(2)
+    console.log(table_detail_view, table_price_detail_view, all_items)
 
     function GetDetails() {
-
-        console.log("Function: GetDetails() is started!")
 
         function detail_table(n, to, inner=true) {
             if (inner) {return table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`).innerHTML} 
@@ -30,20 +29,19 @@ async function GetTables() {
 
         send = {}
 
-        let details = ttemp["details"]
+        let details = t["details"]
         for (key in details) {
             let d = details[key]
             send[key] = detail_table(d[0], d[1], d[2])
             console.log(detail_table(d[0], d[1], d[3]), d[0], d[1], d[2])
         }
-        console.log(send, ttemp, details)
+
+        console.log(send, details)
         return send
     }
 
     // получение деталей об получение оплаты (нал безнал сбп)
     function GetMoneyDetails() {
-
-        console.log("Function: GetMoneyDetails() is started!")
 
         function money_table(n) {
             return table_price_detail_view.querySelector(`tr:nth-child(${n}) td`
@@ -51,9 +49,9 @@ async function GetTables() {
         }
 
         let temp = {
-            cash:    money_table(1), // нал
-            no_cash: money_table(2), // безнал
-            sbp:     money_table(3)  // сбп
+            cash:    money_table(1),
+            no_cash: money_table(2), 
+            sbp:     money_table(3) 
         }
         
         // если нет определенного типа оплаты то -1 (пустота)
@@ -62,55 +60,38 @@ async function GetTables() {
                 temp[key]=-1
             }
         } 
+
         return temp
     }
 
     // получение таблицы с товарами
     function GetItemTable() {
 
-        console.log("Function: GetItemTable() is started!")
-
         let send = {}     
 
         // получение информации о товаре
         all_items.forEach((item) => {
             
-            function isNumeric(num){
-                return !isNaN(num)
-              }
-            // строка с артикулом название и описанием
+            function isNumeric(num) {return !isNaN(num)}
             let all = item.querySelector("td:nth-child(2)").innerHTML 
-
-            // все что мы можем сделать отделить артикул и описание больше и не надо
             let art = all.slice(0, all.indexOf(' '))            // артикул
 
             if (isNumeric(art)) {
 
-                let name = all.slice(all.indexOf(' '), all.length)  // описание
-
-                // в гугл таблицах максимальная длина строки 27 символов режем описание для умещения контента
-                if (name.length > 27) {
-                    name = name.slice(0, 27)
-                }
-
-                // количество товара (переменная в коде простаивает может пригодится)
+                let name = all.slice(all.indexOf(' '), all.length)  
+                if (name.length > 27) {name = name.slice(0, 27)}
                 let count = item.querySelector("td:nth-child(3)").innerHTML.split(".")[0] 
-
-                // с ключем артикулом создаем словарь с описанием и количеством товара
                 send[art] = {"desc": name, "count": count}
 
             } else {
 
                 let name = all
-
-                // количество товара (переменная в коде простаивает может пригодится)
                 let count = item.querySelector("td:nth-child(3)").innerHTML.split(".")[0] 
-
                 send[0] = {"desc": name, "count": count}
 
             }
         })
-
+        
         return send
     }
 
@@ -325,9 +306,8 @@ async function format_uv(table) {
 
 async function run_vp_extention_2345() {
 
-    // размер УВ
-    const uv_size = 40
-    const all_tables_sorted = await GetTables()
+    const settings = get_config("settings.json")
+    const all_tables_sorted = await GetTables(settings)
     const traffic = all_tables_sorted[0]["traffic"]
     
     // "01.02.24, 24:00:00" ==> ["01.02.24", "24:00:00"]
@@ -348,11 +328,10 @@ async function run_vp_extention_2345() {
     
     // создание кнопки
     const button = await InsertButton()
-    let STOP_LIST = await get_config("sp")
 
     async function scan_template(template) {
         // шаблоны для каждого из типа страниц
-        let vp_list = Array(uv_size).fill(-1)  // создание массива
+        let vp_list = Array(settings["add"][0]).fill(-1)  // создание массива
         
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted)  // получение информации о странице
         let temp = template[info[0]]    // подбираем шаблон под страницу
@@ -417,14 +396,13 @@ async function run_vp_extention_2345() {
             // проходимся по массиву
             for (let art in items) {
 
-                
-                console.log(STOP_LIST)
                 // если надо фильтровать
                 if (temp[3][3] == 1) {
-                    if (!(STOP_LIST.includes(art))) {
+                    if (!(settings["stop"].includes(art))) {
                         
                         desc.push(items[art]["desc"])
                         arts.push(art)
+
                     } 
 
                 // в другом случае просто пропускаем все товары
