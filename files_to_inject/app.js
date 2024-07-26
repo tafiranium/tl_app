@@ -305,7 +305,7 @@ async function format_uv(table) {
 
 async function run_vp_extention_2345() {
 
-    const settings = await get_config("settings")
+    const settings = await get_config("settings.json")
     console.log(settings)
     const all_tables_sorted = await GetTables(settings)
     const traffic = all_tables_sorted[0]["traffic"]
