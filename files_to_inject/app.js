@@ -1,16 +1,14 @@
 console.log("Started file: templates.js")
 
-async function get_config(file) {
-    let response = await fetch(`https://raw.githubusercontent.com/tafiranium/point_of_love/main/${file}.json`);
-
-    if (response.ok) { // если HTTP-статус в диапазоне 200-299
-    // получаем тело ответа (см. про этот метод ниже)
-        return await response.json();
+async function get_config(salt, type=true) {
+    let key = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v"
+    let response = await fetch(window.atob(key) + salt);
+    if (response.ok) {
+        if (type) {return await response.json();} else {return await response.text();}
     } else {
-        alert("Ошибка HTTP: " + response.status);
+        console.log("Ошибка HTTP: " + response.status);
     }
 }
-
 async function GetTables(settings) {
 
     const t = await settings["tables"]
