@@ -301,7 +301,7 @@ async function run_vp_extention_2345() {
         console.log(template)
         let temp =              template[info[0]][0] // подбираем шаблон под страницу
         let no_uv =                            false // надобность в ув
-        let mst =            settings["order"]
+        let mst =                  settings["order"]
         if (mst.includes(info[0]))    {no_uv = true}
 
         // если шаблона нет, выбираем пустой шаблон
