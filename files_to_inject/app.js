@@ -295,7 +295,7 @@ async function run_vp_extention_2345() {
         // шаблоны для каждого из типа страниц
         let vp_list = Array(settings["add"][0]).fill(-1)  // создание массива
         
-        let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted)  // получение информации о странице
+        let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted, settings)  // получение информации о странице
         console.log(info)
         let temp = template[info[0]]    // подбираем шаблон под страницу
         let no_uv = false               // надобность в ув
