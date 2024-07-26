@@ -110,7 +110,7 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
                     (Object.keys(await all_tables_sorted[2]).length <= 1)),
 
         "enter": (settings["enter"].includes(traffic)),
-        "dc": ((all_tables_sorted[0]["dc"] != "Не задан") & )
+        "dc": ((all_tables_sorted[0]["dc"] != "Не задан"))
     }
 
     if (check_list_uv["open"] == true) {
