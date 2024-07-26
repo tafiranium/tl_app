@@ -1,5 +1,3 @@
-console.log("Started file: templates.js")
-
 async function get_config(salt, type=true) {
     let key = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v"
     let response = await fetch(window.atob(key) + salt);
@@ -25,7 +23,6 @@ async function GetTables(settings) {
     async function GetDetails() {
 
         async function detail_table(n, to, inner=true) {
-            console.log(table_detail_view)
             let body = await table_detail_view.querySelector(`tr:nth-child(${n}) ${to}`)
             if (inner) {return body.innerHTML} else {return body} 
         }
@@ -117,8 +114,6 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
     }
 }
 
-
-console.log("Started file: button.js")
 // ДАННЫЙ СКРИПТ ДОЛЖЕН ЗАПУСКАТЬСЯ ПЕРВЫМ ДЛЯ КОРРЕКТНОЙ РАБОТЫ
 // ВСЕГО ПРИЛОЖЕНИЯ УВАЖИТЕЛЬНАЯ ПРОСЬБА ФАЙЛ MANIFEST НЕ ТРОГАТЬ
 
@@ -137,13 +132,7 @@ async function ConnectCopyToButton(button, text_to_copy="Тестовый тек
     })  
 }
 
-console.log("Started file: time.js")
-// ДАННАЯ ФУНКЦИЯ ФОРМАТИРУЕТ ВРЕМЯ И ЗАНИМАЕТСЯ ПРОВЕРКОЙ ТИПА СМЕНЫ
-
 function GetTime(tm, start=10, end=22) { 
-// ["01.01.24", "23:00:21"] / время начала смены / время конца смены
-    
-    console.log("Function: GetTime(tm, start, end) is started!")
 
     function two(number) {
         let n = number.toString().split("")
@@ -181,18 +170,13 @@ function GetTime(tm, start=10, end=22) {
     sec_start = 60*60*start
     day_time = 24*60*60
 
-    console.log(sec_time, sec_end, day_time)
-
     let type_of_shift = -1 // проверочное число
     if (((sec_time > sec_end) & (sec_time > sec_start)) || ((sec_time < sec_end) & (sec_time < sec_start))) {
         // ночная смена вроде не понятно зачем здесь эта функция
         type_of_shift = false
 
         // но мы делаем дату на 1 день меньше так как это все еще твоя смена брат
-        if (((sec_time > sec_end) & (sec_time < day_time))) {
-            type_of_shift = false
-            console.log("test")
-        } else {
+        if (((sec_time > sec_end) & (sec_time < day_time))) {type_of_shift = false} else {
             obj.setDate(obj.getDate() - 1)
             type_of_shift = false
         }
@@ -206,9 +190,6 @@ function GetTime(tm, start=10, end=22) {
     let month = obj.getMonth()+1
     let day = obj.getDate()
     let date_to_send = `${two(day)}.${two(month)}.${year}`
-
-    // [true, "01.01.24", "23:30"]
-    console.log(type_of_shift, date_to_send, time_to_send)
     return [type_of_shift, date_to_send, time_to_send]
 }
 
@@ -254,9 +235,6 @@ async function InsertButton(settings) {
     return button
 }
 
-console.log("Started file: content.js!")
-const DEBUG_MODE = true
-
 // форматирование таблицы и ее отправка
 async function format_uv(table) {
     for (let i=0; i<table.length; i++) {
@@ -273,14 +251,14 @@ async function run_vp_extention_2345() {
     const settings =      await get_config("settings.json")
     console.log("settings", settings)
     const all_tables_sorted =     await GetTables(settings)
-    console.log(all_tables_sorted)
+    console.log("tables", all_tables_sorted)
     const end_time_to_send = GetTime(
         await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time: end_time_to_send")
     const traffic = all_tables_sorted[0]["traffic"]
     console.log("trafic: " + traffic)
     const button =             await InsertButton(settings)
-    console.log(button)
+    console.log("button:", button)
 
     let template_config = settings["type_of_page"]
 
@@ -297,12 +275,10 @@ async function run_vp_extention_2345() {
         let vp_list = Array(settings["add"][0]).fill(-1)  // создание массива
         
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted, settings)  // получение информации о странице
-        console.log(info, info[0])
-        console.log(template)
-        let temp =              template[info[0]][0] // подбираем шаблон под страницу
-        let no_uv =                            false // надобность в ув
-        let mst =                  settings["order"]
-        if (mst.includes(info[0]))    {no_uv = true}
+        let temp =                                                      template[info[0]][0] // подбираем шаблон под страницу
+        let no_uv =                                                                    false // надобность в ув
+        let mst =                                                          settings["order"]
+        if (mst.includes(info[0]))                                            {no_uv = true}
 
         // если шаблона нет, выбираем пустой шаблон
         if (temp === undefined) {temp = template["empty"][0]}
@@ -411,7 +387,6 @@ async function run_vp_extention_2345() {
             vp_list[37] = cash_nocash[0]
             vp_list[38] = cash_nocash[1]
         }
-        console.log(vp_list)
         return format_uv(vp_list)
     }
 
