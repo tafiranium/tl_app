@@ -297,9 +297,9 @@ async function run_vp_extention_2345() {
         
         let info = await check_list_uv_234(traffic, tamplate_t, all_tables_sorted, settings)  // получение информации о странице
         console.log(info)
-        let temp = template[info[0]]    // подбираем шаблон под страницу
-        let no_uv = false               // надобность в ув
-        let mst = await get_config("mst")
+        let temp =              template[info[0]] // подбираем шаблон под страницу
+        let no_uv =                         false // надобность в ув
+        let mst =         await get_config("mst")
         if (mst.includes(info[0])) {no_uv = true}
 
         // если шаблона нет, выбираем пустой шаблон
