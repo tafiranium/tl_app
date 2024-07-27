@@ -441,7 +441,7 @@ async function run_vp_extention_2345() {
         }
         return format_uv(vp_list)
     }
-
+    console.log(button)
     await ConnectCopyToButton(button, await scan_template(template_config))
 }
 
