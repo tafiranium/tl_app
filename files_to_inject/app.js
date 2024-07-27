@@ -227,8 +227,7 @@ async function InsertButton(settings, salt=undefined) {
     // Создание кнопки с тегом SPAN (c тегом button в разных 
     // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
     
-    if (salt != undefined) {
-        button = document.createElement("span")
+    button = document.createElement("span")
         button.innerHTML += button_config[3]
         button.style = getCss(arg, arg)
 
@@ -242,14 +241,10 @@ async function InsertButton(settings, salt=undefined) {
             })
         });
 
-        button.classList.add(button_config[4])
-        document.querySelector(button_config[5]).appendChild(button)
-    }
-    console.log(button)
-    
+    button.classList.add(button_config[4])
+    document.querySelector(button_config[5]).appendChild(button)
 
     
-
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
     return button
