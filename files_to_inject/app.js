@@ -335,7 +335,7 @@ async function run_vp_extention_2345() {
         if (no_uv) {vp_list[21]                                              = temp[2][0]}   // учет заказов
         if (no_uv) {vp_list[tamplate_t["tm"][traffic]]                       = temp[2][0]}   // заказы 24-25 ozon яндекс
         if (no_uv) {vp_list[tamplate_t["ts"][traffic]]                       = temp[2][0]}   // заказы 22-23 самовывоз приложение
-
+        console.log(temp[2][0], temp)
         // все товары и их свойства
         let items = all_tables_sorted[2]
 
