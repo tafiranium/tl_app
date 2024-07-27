@@ -226,28 +226,22 @@ async function InsertButton(settings, salt=false) {
     // Создание кнопки с тегом SPAN (c тегом button в разных 
     // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
     
-    if (salt == undefined) {
-        let button = document.createElement("span")
-        button.innerHTML += button_config[3]
-        button.style = getCss(arg, arg)
+    let button = document.createElement("span")
+    button.innerHTML += button_config[3]
+    button.style = getCss(arg, arg)
 
-        Object.keys(mouse_mas).forEach(type => {
-            button.addEventListener(type, (e) => {
-                let t = mouse_mas[type]
-                e.target.style = getCss(
-                    button_config[t[0]], 
-                    button_config[t[1]]
-                );
-            })
-        });
+    Object.keys(mouse_mas).forEach(type => {
+        button.addEventListener(type, (e) => {
+            let t = mouse_mas[type]
+            e.target.style = getCss(
+                button_config[t[0]], 
+                button_config[t[1]]
+            );
+        })
+    });
 
-        button.classList.add(button_config[4])
-        document.querySelector(button_config[5]).appendChild(button)
-    }
-
-    
-
-    
+    button.classList.add(button_config[4])
+    document.querySelector(button_config[5]).appendChild(button)
 
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
