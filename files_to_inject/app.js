@@ -270,6 +270,7 @@ async function run_vp_extention_2345() {
         await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time:",  end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
+    const button = InsertButton(settings)
     let template_config = settings["type_of_page"]
 
     let DAY_SHOP = undefined
@@ -435,7 +436,7 @@ async function run_vp_extention_2345() {
         return format_uv(vp_list)
     }
 
-    const button = InsertButton(settings, DAY_SHOP)
+    
     await ConnectCopyToButton(button, await scan_template(template_config))
 }
 
