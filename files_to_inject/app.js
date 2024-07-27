@@ -129,14 +129,45 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
 // ДАННЫЙ СКРИПТ ДОЛЖЕН ЗАПУСКАТЬСЯ ПЕРВЫМ ДЛЯ КОРРЕКТНОЙ РАБОТЫ
 // ВСЕГО ПРИЛОЖЕНИЯ УВАЖИТЕЛЬНАЯ ПРОСЬБА ФАЙЛ MANIFEST НЕ ТРОГАТЬ
 
+// форматирование таблицы и ее отправка
+
+
 // ДАННАЯ ФУНКЦИЯ ПРИВЯЗЫВАЕТ К КНОПКЕ КОПИРОВАНИЕ ЗАДАННОГО ТЕКСТА ИММИТАЦИЯ КОМАНДОЙ CTRL+C
-async function ConnectCopyToButton(button, text_to_copy="Тестовый текст не имеющий смысла, если ты это видишь значит в коде ошибка!") {
-    
-    console.log("Function:  ConnectCopyToButton(button, text_to_copy) is started!")
-    button.addEventListener("click", () => {
-        navigator.clipboard.writeText(text_to_copy)
+async function ConnectCopyToButton(button, vp) {
+
+    function format_uv(table) {
+        for (let i=0; i<table.length; i++) {
+            if (table[i] == -1) {
+                table[i] = ""
+            }
+        }
+        let send = table.join("\t")
+        return send
+    }
+
+    console.log(vp)
+
+    button[0].addEventListener("click", () => {
+
+        console.log(vp[17], vp[31])
+        console.log(button[1][1].checked, button[1][0].checked)
+
+        if (vp[17]) {
+            if (!(button[1][1].checked)) {
+                vp[17] = -1
+            }
+        }
+
+        if (vp[31]) {
+            if (button[1][0].checked) {
+                vp[32] = vp[31]
+                vp[31] = -1
+            }
+        }
+
+        navigator.clipboard.writeText(format_uv(vp))
                 .then(() => {
-                    console.log(`"${text_to_copy}" - скопировано в буфер обмена!`)
+                    console.log(`"${format_uv(vp)}" - скопировано в буфер обмена!`)
                 })
                 .catch(err => {
                     console.log("Ошибка", err);
@@ -225,7 +256,35 @@ async function InsertButton(settings, salt=false) {
 
     // Создание кнопки с тегом SPAN (c тегом button в разных 
     // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
+    let dv = document.createElement("div")
+    dv.style = "display: flex; justify-content: center; align-items: start; flex-direction: row; margin-left: 60px;"
+
+    let checkboxes = {
+        "sbp": "СБП",
+        "dc": "Новая ДК"
+    }
+
+    send = []
+
+    for (let elem in checkboxes) {
+        let checkbox = document.createElement("input")
+        checkbox.classList.add(elem)
+        checkbox.style.marginRight="5px"
+        checkbox.type = "checkbox"
+
+        let clable = document.createElement("label")
+        clable.innerHTML += checkboxes[elem]
+        clable.style.marginRight="15px"
+
+        dv.appendChild(checkbox)
+        dv.appendChild(clable)
+        send.push(checkbox)
+    }
     
+    
+
+
+
     let button = document.createElement("span")
     button.innerHTML += button_config[3]
     button.style = getCss(arg, arg)
@@ -241,23 +300,23 @@ async function InsertButton(settings, salt=false) {
     });
 
     button.classList.add(button_config[4])
-    document.querySelector(button_config[5]).appendChild(button)
+    let box = document.querySelector(button_config[5])
+    box.style = "display: flex; justify-content: center; align-items: start; flex-direction: column;"
+    box.appendChild(button)
+    box.appendChild(dv)
+
+
+
+    
+
+    console.log([button, send])
 
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
-    return button
+    return [button, send]
 }
 
-// форматирование таблицы и ее отправка
-async function format_uv(table) {
-    for (let i=0; i<table.length; i++) {
-        if (table[i] == -1) {
-            table[i] = ""
-        }
-    }
-    let send = table.join("\t")
-    return send
-}
+
 
 async function run_vp_extention_2345() {
 
@@ -270,7 +329,7 @@ async function run_vp_extention_2345() {
     console.log("time:",  end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
     console.log("trafic: " + traffic)
-    const button = await InsertButton(settings)
+    
     
 
     let template_config = settings["type_of_page"]
@@ -335,7 +394,7 @@ async function run_vp_extention_2345() {
         if (no_uv) {vp_list[21]                                              = temp[2][0]}   // учет заказов
         if (no_uv) {vp_list[tamplate_t["tm"][traffic]]                       = temp[2][0]}   // заказы 24-25 ozon яндекс
         if (no_uv) {vp_list[tamplate_t["ts"][traffic]]                       = temp[2][0]}   // заказы 22-23 самовывоз приложение
-        console.log(temp[2][0], temp)
+
         // все товары и их свойства
         let items = all_tables_sorted[2]
 
@@ -432,10 +491,10 @@ async function run_vp_extention_2345() {
             vp_list[37] = cash_nocash[0]
             vp_list[38] = cash_nocash[1]
         }
-        return format_uv(vp_list)
+        return vp_list
     }
-    console.log(button)
-    await ConnectCopyToButton(button, await scan_template(template_config))
+
+    await ConnectCopyToButton(await InsertButton(settings), await scan_template(template_config))
 }
 
 run_vp_extention_2345()
