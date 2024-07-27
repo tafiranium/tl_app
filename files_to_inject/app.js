@@ -93,13 +93,12 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
         if (siz <= 1) {
             if (all_tables_sorted[2][0] != undefined)
                 if (all_tables_sorted[2][0]["desc"] === name) {
-                    console.log(name, true)
                     return true
                 }
         }
         else return false
     }
-    console.log(all_tables_sorted[0]["return"].classList.contains("cssDisplayNone"))
+
     let check_list_uv = {
         "buyer":    (t["buyer"][1][traffic]  != undefined),
         "market":   (t["market"][1][traffic] != undefined),
@@ -115,7 +114,6 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
 
     if (check_list_uv["open"] == true) {check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")}
     let send = [check_list_uv["enter"], check_list_uv["dc"], settings["points"][all_tables_sorted[0]["shop"]]]
-    console.log((check_list_uv))
     if (check_list_uv["return"])     {return ["return", send];} else {
         if      (check_list_uv["open"])     {return ["open", send]   }
         if      (check_list_uv["no_item"])  {return ["no_item", send]}
@@ -145,12 +143,7 @@ async function ConnectCopyToButton(button, vp) {
         return send
     }
 
-    console.log(vp)
-
     button[0].addEventListener("click", () => {
-
-        console.log(vp[17], vp[31])
-        console.log(button[1][1].checked, button[1][0].checked)
 
         if (vp[17]) {
             if (!(button[1][1].checked)) {
@@ -167,7 +160,7 @@ async function ConnectCopyToButton(button, vp) {
 
         navigator.clipboard.writeText(format_uv(vp))
                 .then(() => {
-                    console.log(`"${format_uv(vp)}" - скопировано в буфер обмена!`)
+                    console.log(`Успешно скопировано в буфер обмена!`)
                 })
                 .catch(err => {
                     console.log("Ошибка", err);
@@ -305,12 +298,6 @@ async function InsertButton(settings, salt=false) {
     box.appendChild(button)
     box.appendChild(dv)
 
-
-
-    
-
-    console.log([button, send])
-
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
     return [button, send]
@@ -352,7 +339,7 @@ async function run_vp_extention_2345() {
         let mst =                                                          settings["order"]
         if (mst.includes(info[0]))                                            {no_uv = true}
 
-        console.log(info)
+        console.log("info", info)
 
         // если шаблона нет, выбираем пустой шаблон
         if (temp === undefined) {temp = template["empty"][0]}
@@ -448,13 +435,11 @@ async function run_vp_extention_2345() {
         function cd(n) {
             let num = n.split(".")
             if (num[1] == "00") {
-                console.log(num[0])
                 return num[0]
             } else {
                 if (num[1][1] == "0") {
                     num[1] = num[1][0]
                 }
-                console.log(num.join("."))
                 return num.join(".")
                 
             }
@@ -466,7 +451,6 @@ async function run_vp_extention_2345() {
                 m[i] = -1
             }
         }
-        console.log(m)
 
         // нал безнал
         cash_nocash = [m[0], m[1] + m[2]]
