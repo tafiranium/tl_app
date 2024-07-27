@@ -210,7 +210,6 @@ async function InsertButton(settings, salt=false) {
     const button_config = settings["button"]
     let mouse_mas = button_config[6]
     let arg = button_config[0]
-    let button = false
     
     // форматирование css для внедрения на сайт одной строкой
     function getCss(start, end) {
