@@ -277,7 +277,7 @@ async function run_vp_extention_2345() {
     console.log("time:",  end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
     console.log("trafic: " + traffic)
-    const button = InsertButton(settings, )
+    const button = InsertButton(settings)
     
 
     let template_config = settings["type_of_page"]
