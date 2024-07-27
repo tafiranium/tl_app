@@ -205,12 +205,13 @@ function GetTime(tm, start=10, end=22) {
     return [type_of_shift, date_to_send, time_to_send]
 }
 
-async function InsertButton(settings, salt=undefined) {   
+async function InsertButton(settings, salt=false) {   
 
     const button_config = settings["button"]
     let mouse_mas = button_config[6]
     let arg = button_config[0]
-    console.log(salt)
+    let button = false
+    
     // форматирование css для внедрения на сайт одной строкой
     function getCss(start, end) {
         let css = "";
@@ -226,7 +227,8 @@ async function InsertButton(settings, salt=undefined) {
     // Создание кнопки с тегом SPAN (c тегом button в разных 
     // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
     
-    button = document.createElement("span")
+    if (salt == undefined) {
+        let button = document.createElement("span")
         button.innerHTML += button_config[3]
         button.style = getCss(arg, arg)
 
@@ -240,10 +242,14 @@ async function InsertButton(settings, salt=undefined) {
             })
         });
 
-    button.classList.add(button_config[4])
-    document.querySelector(button_config[5]).appendChild(button)
+        button.classList.add(button_config[4])
+        document.querySelector(button_config[5]).appendChild(button)
+    }
 
     
+
+    
+
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
     return button
@@ -270,10 +276,11 @@ async function run_vp_extention_2345() {
         await all_tables_sorted[0]["datetime"].split(", "))
     console.log("time:",  end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
-    const button = InsertButton(settings)
-    let template_config = settings["type_of_page"]
+    console.log("trafic: " + traffic)
+    const button = InsertButton(settings, )
+    
 
-    let DAY_SHOP = undefined
+    let template_config = settings["type_of_page"]
 
     const tamplate_t = {
         "te": settings["enter"],
@@ -293,7 +300,7 @@ async function run_vp_extention_2345() {
         let mst =                                                          settings["order"]
         if (mst.includes(info[0]))                                            {no_uv = true}
 
-        console.log(info[0])
+        console.log(info)
 
         // если шаблона нет, выбираем пустой шаблон
         if (temp === undefined) {temp = template["empty"][0]}
@@ -303,7 +310,6 @@ async function run_vp_extention_2345() {
         let default_values = {"shift": true, "date": true, "time": true, "name": true}
         
         const DAY_SHOP = info[1][2]
-        console.log("day_shop:", DAY_SHOP)
 
         function default_values_insert(values) {
 
@@ -436,7 +442,6 @@ async function run_vp_extention_2345() {
         return format_uv(vp_list)
     }
 
-    
     await ConnectCopyToButton(button, await scan_template(template_config))
 }
 
