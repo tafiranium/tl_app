@@ -41,8 +41,8 @@ async function GetTables(settings) {
     function GetMoneyDetails() {
 
         function money_table(n) {
-            return table_price_detail_view.querySelector(`tr:nth-child(${n}) td`
-                ).innerHTML.replace(" ", "").replace("руб.", "").split(".")[0]
+            return parseFloat(table_price_detail_view.querySelector(`tr:nth-child(${n}) td`
+                ).innerHTML.replace(" ", "").replace("руб.", "")).toFixed(2)
         }
 
         let temp = {cash: money_table(1), no_cash: money_table(2), sbp: money_table(3) }
@@ -87,23 +87,35 @@ async function GetTables(settings) {
 
 async function check_list_uv_234(traffic, template, all_tables_sorted, settings) {
     let t = settings["type_of_page"]
+
+    function one_check(name) {
+        let siz = Object.keys(all_tables_sorted[2]).length
+        if (siz <= 1) {
+            if (all_tables_sorted[2][0] != undefined)
+                if (all_tables_sorted[2][0]["desc"] === name) {
+                    console.log(name, true)
+                    return true
+                }
+        }
+        else return false
+    }
+    console.log(all_tables_sorted[0]["return"].classList.contains("cssDisplayNone"))
     let check_list_uv = {
         "buyer":    (t["buyer"][1][traffic]  != undefined),
         "market":   (t["market"][1][traffic] != undefined),
         "shop":     (t["shop"][1][traffic]   != undefined),
         "takeup":   (t["shop"][1][traffic]   != undefined),
-        "open":     (all_tables_sorted[2][0] != undefined),
+        "open":     one_check("открытие смены"),
         "return":   (all_tables_sorted[0]["return"].classList.contains("cssDisplayNone") != true),
-        "no_item":  !!((template["ni"].includes(traffic)) & ((Object.keys(all_tables_sorted)[0] == 0)) & 
-                                    (Object.keys(await all_tables_sorted[2]).length <= 1)),
+        "no_item":  one_check("Нетовар"),
         "enter": (settings["enter"].includes(traffic)),
-        "dc": ((all_tables_sorted[0]["dc"] != "Не задан") & (all_tables_sorted[0]["buyer"] != "Не задан") &
+        "dc": !!((all_tables_sorted[0]["dc"] != "Не задан") & (all_tables_sorted[0]["buyer"] != "Не задан") &
                 (all_tables_sorted[0]["dc"] != "") & (all_tables_sorted[0]["buyer"] != ""))
     }
 
     if (check_list_uv["open"] == true) {check_list_uv["open"] = (await all_tables_sorted[2][0]['desc'] == "открытие смены")}
     let send = [check_list_uv["enter"], check_list_uv["dc"], settings["points"][all_tables_sorted[0]["shop"]]]
-
+    console.log((check_list_uv))
     if (check_list_uv["return"])     {return ["return", send];} else {
         if      (check_list_uv["open"])     {return ["open", send]   }
         if      (check_list_uv["no_item"])  {return ["no_item", send]}
@@ -193,11 +205,12 @@ function GetTime(tm, start=10, end=22) {
     return [type_of_shift, date_to_send, time_to_send]
 }
 
-async function InsertButton(settings) {   
+async function InsertButton(settings, salt=undefined) {   
 
     const button_config = settings["button"]
     let mouse_mas = button_config[6]
     let arg = button_config[0]
+    let button = false
     
     // форматирование css для внедрения на сайт одной строкой
     function getCss(start, end) {
@@ -213,22 +226,29 @@ async function InsertButton(settings) {
 
     // Создание кнопки с тегом SPAN (c тегом button в разных 
     // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
-    let button = document.createElement("span")
-    button.innerHTML += button_config[3]
-    button.style = getCss(arg, arg)
+    
+    if (salt != undefined) {
+        button = document.createElement("span")
+        button.innerHTML += button_config[3]
+        button.style = getCss(arg, arg)
 
-    Object.keys(mouse_mas).forEach(type => {
-        button.addEventListener(type, (e) => {
-            let t = mouse_mas[type]
-            e.target.style = getCss(
-                button_config[t[0]], 
-                button_config[t[1]]
-            );
-        })
-    });
+        Object.keys(mouse_mas).forEach(type => {
+            button.addEventListener(type, (e) => {
+                let t = mouse_mas[type]
+                e.target.style = getCss(
+                    button_config[t[0]], 
+                    button_config[t[1]]
+                );
+            })
+        });
 
-    button.classList.add(button_config[4])
-    document.querySelector(button_config[5]).appendChild(button)
+        button.classList.add(button_config[4])
+        document.querySelector(button_config[5]).appendChild(button)
+    }
+    console.log(button)
+    
+
+    
 
     // возвращает DOM element (кнопка, уже внедрена, 
     // кнопку сохраняем для дальнейших манипуляций при желании)
@@ -254,13 +274,11 @@ async function run_vp_extention_2345() {
     console.log("tables", all_tables_sorted)
     const end_time_to_send = GetTime(
         await all_tables_sorted[0]["datetime"].split(", "))
-    console.log("time: end_time_to_send")
+    console.log("time:",  end_time_to_send)
     const traffic = all_tables_sorted[0]["traffic"]
-    console.log("trafic: " + traffic)
-    const button =             await InsertButton(settings)
-    console.log("button:", button)
-
     let template_config = settings["type_of_page"]
+
+    let DAY_SHOP = undefined
 
     const tamplate_t = {
         "te": settings["enter"],
@@ -280,6 +298,8 @@ async function run_vp_extention_2345() {
         let mst =                                                          settings["order"]
         if (mst.includes(info[0]))                                            {no_uv = true}
 
+        console.log(info[0])
+
         // если шаблона нет, выбираем пустой шаблон
         if (temp === undefined) {temp = template["empty"][0]}
 
@@ -288,6 +308,7 @@ async function run_vp_extention_2345() {
         let default_values = {"shift": true, "date": true, "time": true, "name": true}
         
         const DAY_SHOP = info[1][2]
+        console.log("day_shop:", DAY_SHOP)
 
         function default_values_insert(values) {
 
@@ -346,6 +367,13 @@ async function run_vp_extention_2345() {
                 }
             } 
 
+            let count_of_items = 0
+
+            for (let i = 0; i < arts.length; i++) {
+                let a = arts[i]
+                count_of_items += Number(items[a]["count"])
+            }
+
             if (temp[3][1] != 1)                                                          {desc = []}
             let comment_245 =                                         all_tables_sorted[0]["comment"]
             if (temp[3][4] == 1 & !(["Не задан", ""].includes(comment_245))) {desc.push(comment_245)}
@@ -358,18 +386,41 @@ async function run_vp_extention_2345() {
                 vp_list[27] = temp[3][0]
                 vp_list[28] = temp[3][0]
             } else {
-                vp_list[27] =           1
-                vp_list[28] = arts.length
+                vp_list[27] =              1
+                vp_list[28] = count_of_items
             }
 
         }  
 
+        function cd(n) {
+            let num = n.split(".")
+            if (num[1] == "00") {
+                console.log(num[0])
+                return num[0]
+            } else {
+                if (num[1][1] == "0") {
+                    num[1] = num[1][0]
+                }
+                console.log(num.join("."))
+                return num.join(".")
+                
+            }
+        }
+
+        m = [Number(cd((all_tables_sorted[1]["cash"]))), Number(cd((all_tables_sorted[1]["no_cash"]))), Number(cd((all_tables_sorted[1]["sbp"])))]
+        for (let i = 0; i<3; i++) {
+            if (m[i] == 0) {
+                m[i] = -1
+            }
+        }
+        console.log(m)
+
         // нал безнал
-        cash_nocash = [all_tables_sorted[1]["cash"], (Number(all_tables_sorted[1]["no_cash"]) +  Number(all_tables_sorted[1]["sbp"]))]
+        cash_nocash = [m[0], m[1] + m[2]]
         if (cash_nocash[1] < 0) {cash_nocash[1] = -1}
 
         // нал безнал сбп
-        cash_nocash_sbp = [all_tables_sorted[1]["cash"], all_tables_sorted[1]["no_cash"], all_tables_sorted[1]["sbp"]]
+        cash_nocash_sbp = [m[0], m[1], m[2]]
         
         // обычная оплата 
         if (temp[4][0] === 1) {
@@ -390,6 +441,7 @@ async function run_vp_extention_2345() {
         return format_uv(vp_list)
     }
 
+    const button = InsertButton(settings, DAY_SHOP)
     await ConnectCopyToButton(button, await scan_template(template_config))
 }
 
