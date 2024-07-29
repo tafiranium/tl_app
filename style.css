@@ -8,10 +8,11 @@ span.box_2456 {
     top: 87px;
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px;
-  };
+    transition: 1s ease-in-out;
+};
   
-  span.box_2456:hover {
+span.box_2456:hover {
     right: 0px;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px; 
-  };
+};
