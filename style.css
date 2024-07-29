@@ -9,4 +9,37 @@ span.box_2456 {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     transition: 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-beetween;
+    align-items: center;
+    flex-direction: column;
 };
+
+span.header2356 {
+    display: flex;
+    justify-content: space-beetween;
+    align-items: center;
+    flex-direction: row;
+    height: 30px;
+    width: 100%;
+    background: red;
+};
+
+span.title2356 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: blue;
+};
+
+span.refresh2356 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 30px;
+    background: green;
+};
+
