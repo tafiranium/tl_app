@@ -4,15 +4,16 @@ span.box_2456 {
     width: 250px;
     background:black; 
     z-index:100; 
-    right: -220px; 
+    right: 0px; 
     top: 87px;
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px;
     transition: 1s ease-in-out;
+    transform: translateX(220px);
 };
   
 span.box_2456:hover {
-    right: 0px;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px; 
+    transform: translateX(0px);
 };
