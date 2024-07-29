@@ -1,13 +1,15 @@
 span.box_2456 {
-  position: absolute; 
-  height: 150px;
-  width: 250px;
-  background:black; 
-  z-index:100; 
-  right: -220px; 
-  top: 45px;
-};
-
-span.box_2456:hover {
-  right:0; 
-};
+    position: absolute; 
+    height: 150px;
+    width: 250px;
+    background:black; 
+    z-index:100; 
+    right: -220px; 
+    top: 45px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  };
+  
+  span.box_2456:hover {
+    right:0; 
+  };
