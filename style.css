@@ -6,14 +6,7 @@ span.box_2456 {
     z-index:100; 
     right: 0px; 
     top: 87px;
-    border-top-left-radius: 30px;
-    border-bottom-left-radius: 30px;
-    transition: 1s ease-in-out;
-    transform: translateX(220px);
-};
-  
-span.box_2456:hover {
     border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px; 
-    transform: translateX(0px);
+    border-bottom-left-radius: 15px;
+    transition: 1s ease-in-out;
 };
