@@ -1,12 +1,3 @@
-
-let test_script = document.createElement("script")
-test_script.src = "https://raw.githubusercontent.com/tafiranium/point_of_love/main/test.js"
-test_script.type="text/javascript"
-test_script.defer = true
-
-document.head.appendChild(test_script)
-
-
 // Лицензируемое программное обеспечение: Это лицензируемое программное обеспечение – расширение для браузера, которое распространяется как на клиентскую, так и для серверную часть.
 // Область действия лицензии: Эта лицензия распространяется на использование расширения для браузера на сайте VP.
 // Оплата: Пользователь соглашается на разовую оплату фиксированной суммы за использование на одном магазине.
@@ -161,7 +152,7 @@ async function ConnectCopyToButton(button, vp) {
 
     document.onkeydown = function(e1){
         e1 = e1 || window.event;
-        if(e1.altKey && e1.key === "s") {
+        if(e1.altKey && (e1.key === "s" & el.key === "ы")) {
                 if (vp[17]) {if (!(button[1][1].checked)) {vp[17] = -1}}
                 if (vp[31]) {if (button[1][0].checked) {vp[32] = vp[31];vp[31] = -1;}}
         
