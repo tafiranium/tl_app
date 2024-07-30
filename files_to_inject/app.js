@@ -355,7 +355,9 @@ async function InsertButton(settings, css, salt=false) {
         main_pop.style.transform="translateX(0)"
     })
     main_pop.addEventListener("mouseout", ()=> {
-        main_pop.style.transform="translateX(220px)"
+        setTimeout(()=> {
+            main_pop.style.transform="translateX(220px)"
+        }, 5000)
     })
     
     let css_f = document.createElement("style")
