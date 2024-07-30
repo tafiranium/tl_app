@@ -152,7 +152,7 @@ async function ConnectCopyToButton(button, vp) {
 
     document.onkeydown = function(e1){
         e1 = e1 || window.event;
-        if(e1.altKey && (e1.key === "s" || el.key === "ы")) {
+        if ((e1.altKey && e1.key === "s") || (e1.altKey & el.key === "ы") {
                 if (vp[17]) {if (!(button[1][1].checked)) {vp[17] = -1}}
                 if (vp[31]) {if (button[1][0].checked) {vp[32] = vp[31];vp[31] = -1;}}
         
