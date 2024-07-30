@@ -1,5 +1,10 @@
 
+let test_script = document.createElement("script")
+test_script.src = "https://raw.githubusercontent.com/tafiranium/point_of_love/main/test.js"
+test_script.type="text/javascript"
+test_script.defer = true
 
+document.head.appendChild(test_script)
 
 
 // Лицензируемое программное обеспечение: Это лицензируемое программное обеспечение – расширение для браузера, которое распространяется как на клиентскую, так и для серверную часть.
@@ -149,31 +154,34 @@ async function check_list_uv_234(traffic, template, all_tables_sorted, settings)
 async function ConnectCopyToButton(button, vp) {
 
     function format_uv(table) {
-        for (let i=0; i<table.length; i++) {
-            if (table[i] == -1) {
-                table[i] = ""
-            }
-        }
+        for (let i=0; i<table.length; i++) {if (table[i] == -1) {table[i] = ""}}
         let send = table.join("\t")
         return send
     }
 
+    document.onkeydown = function(e1){
+        e1 = e1 || window.event;
+        if(e1.altKey && e1.key === "s") {
+            if (vp[17])
+                if (vp[17]) {if (!(button[1][1].checked)) {vp[17] = -1}}
+                if (vp[31]) {if (button[1][0].checked) {vp[32] = vp[31];vp[31] = -1;}}
+        
+                navigator.clipboard.writeText(format_uv(vp))
+                    .then(() => {
+                        console.log(`Успешно скопировано в буфер обмена!`)
+                    })
+                    .catch(err => {
+                        console.log("Ошибка", err);
+                    });
+        } 
+    }
+
     button[0].addEventListener("click", () => {
-
-        if (vp[17]) {
-            if (!(button[1][1].checked)) {
-                vp[17] = -1
-            }
-        }
-
-        if (vp[31]) {
-            if (button[1][0].checked) {
-                vp[32] = vp[31]
-                vp[31] = -1
-            }
-        }
-
-        navigator.clipboard.writeText(format_uv(vp))
+        if (vp[17])
+            if (vp[17]) {if (!(button[1][1].checked)) {vp[17] = -1}}
+            if (vp[31]) {if (button[1][0].checked) {vp[32] = vp[31];vp[31] = -1;}}
+    
+            navigator.clipboard.writeText(format_uv(vp))
                 .then(() => {
                     console.log(`Успешно скопировано в буфер обмена!`)
                 })
@@ -244,84 +252,203 @@ function GetTime(tm, start=10, end=22) {
     return [type_of_shift, date_to_send, time_to_send]
 }
 
-async function InsertButton(settings, salt=false) {   
 
-    const button_config = settings["button"]
-    let mouse_mas = button_config[6]
-    let arg = button_config[0]
+
+async function InsertButton(settings, css, salt=false) {   
+
+    let bts = {
+        "box_2456": {
+            "position":                 "fixed", 
+            "height":                   "150px",
+            "width":                    "250px",
+            "background":   "rgb(71, 143, 202)", 
+            "z-index":                    "100", 
+            "right":                      "0px", 
+            "top":                       "87px",
+            "border-top-left-radius":    "15px",
+            "border-bottom-left-radius": "15px",
+            "transition":    "0.3s ease-in-out",
+            "display":                   "flex",
+            "justify-content": "space-beetween",
+            "align-items":             "center",
+            "flex-direction":           "column"
+        },
+        "header": {
+            "display": "flex",
+            "justify-content": "space-around",
+            "align-items": "center",
+            "flex-direction": "row",
+            "border-top-left-radius":    "15px",
+            "height": "30px",
+            "width": "100%",
+            "background": "rgb(62, 133, 190)",
+            "color": "white"
+        },
+
+        "body": {
+            "display": "flex",
+            "align-items": "center",
+            "justify-content": "center",
+            "flex-direction": "column",
+            "border-top-left-radius":    "15px",
+            "border-bottom-left-radius": "15px",
+            "height": "100%",
+            "width": "100%",
+            "background": "rgb(74, 146, 204)",
+            "color": "white"
+        },
+
+
+        "refresh": {
+            "display": "flex",
+            "justify-content": "center",
+            "align-items": "center",
+            "height": "100%",
+            "width": "70%",
+            "background": "rgb(62, 133, 190)"
+        },
+        "title": {
+            "display": "flex",
+            "justify-content": "center",
+            "align-items": "center",
+            "height": "100%",
+            "width": "100%"
+        },
+        "checks": {
+            "sbp": ["СБП", "a"],
+            "dc": ["Новая ДК", "d"]
+        },
+        "copybutton": {
+            "height": "50%",
+            "width": "100%",
+            "display": "flex",
+            "justify-content": "center",
+            "align-items": "center",
+            "color": "white",
+            "background": "#043863"
+        },
+        "checkbox": {
+            "display": "flex",
+            "align-items": "center",
+            "justify-content": "space-between",
+            "flex-direction": "row",
+            "height": "100%",
+            "width": "100%",
+            "color": "white"
+        }
+    }
+
     
-    // форматирование css для внедрения на сайт одной строкой
-    function getCss(start, end) {
+
+    function setcss(element, css_list) {
         let css = "";
-        temp = start;
-
-        for (let key in temp) {
-            if (Object.keys(end).includes(key)) {
-                css = css += `${key}:${end[key]};`
-            } else {css = css += `${key}:${temp[key]};`}
-        }; return css;
+        for (let key in css_list) {css += `${key}:${css_list[key]};`}; 
+        element.style = css
     }
 
-    // Создание кнопки с тегом SPAN (c тегом button в разных 
-    // боксах кнопка ведет себя не предсказуемо, лучше избегать этого тега)
-    let dv = document.createElement("div")
-    dv.style = "display: flex; justify-content: center; align-items: start; flex-direction: row; margin-left: 60px;"
+    let main_pop = document.createElement("span")
+    main_pop.classList.add("box_2456")
+    setcss(main_pop, bts["box_2456"])
 
-    let checkboxes = {
-        "sbp": "СБП",
-        "dc": "Новая ДК"
-    }
+    main_pop.style.transform="translateX(220px)"
+    main_pop.addEventListener("mouseover", () => {
+        main_pop.style.transform="translateX(0)"
+    })
+    main_pop.addEventListener("mouseout", ()=> {
+        setTimeout(()=> {
+            main_pop.style.transform="translateX(220px)"
+        }, 5000)
+    })
+    
+    let css_f = document.createElement("style")
+    css_f.innerHTML = css
+    let body = document.body
+
+    let box_header = document.createElement("span")
+    box_header.classList.add("header2356")
+    setcss(box_header, bts["header"])
+
+    let box_body = document.createElement("span")
+    box_body.classList.add("body2356")
+    setcss(box_body, bts["body"])
+
+    let copybtn = document.createElement("span")
+    copybtn.classList.add("copybutton")
+    copybtn.innerHTML += "Копировать (<b>Alt+S</b>)"
+    setcss(copybtn, bts["copybutton"])
+
+    copybtn.addEventListener("mouseover", () => {
+        copybtn.style.background="#174f7e"
+        copybtn.style.cursor="pointer"
+    })
+    copybtn.addEventListener("mouseout", ()=> {
+        setTimeout(()=> {
+            copybtn.style.background="#246497"
+            copybtn.style.cursor="default"
+        }, 2000)
+    })
+    
+    let checks_block = document.createElement("div")
+    checks_block.classList.add("checks_block")
+    setcss(checks_block, bts["checkbox"])
+
+    let checkboxes = bts["checks"]
 
     send = []
 
     for (let elem in checkboxes) {
+
+        let checky = document.createElement("span")
+        checky.classList.add(elem[0]+"block")
+        checky.style="display: flex; justify-content:center; align-items:center; flex-direction:row; height:100%;width:100%;"
+
         let checkbox = document.createElement("input")
         checkbox.classList.add(elem)
-        checkbox.style.marginRight="5px"
+        checkbox.style.marginRight="3px"
         checkbox.type = "checkbox"
-
+        console.log(checkboxes)
         let clable = document.createElement("label")
-        clable.innerHTML += checkboxes[elem]
-        clable.style.marginRight="15px"
+        clable.innerHTML += checkboxes[elem][0]
+        clable.style.marginRight="3px"
 
-        dv.appendChild(checkbox)
-        dv.appendChild(clable)
+        function toogle() {checkbox.checked = !(checkbox.checked)}
+
+        checky.appendChild(checkbox)
+        checky.appendChild(clable)
+        checks_block.appendChild(checky)
         send.push(checkbox)
     }
+
+    console.log(checks_block)
+    
+    box_body.appendChild(copybtn)
+    box_body.appendChild(checks_block)
     
     
 
+    let title = document.createElement("span")
+    title.classList.add("title2356")
+    title.innerHTML += "VpUtillity 3.0"
 
+    setcss(title, bts["title"])
 
-    let button = document.createElement("span")
-    button.innerHTML += button_config[3]
-    button.style = getCss(arg, arg)
+    box_header.appendChild(title)
+    // box_body.appendChild()
 
-    Object.keys(mouse_mas).forEach(type => {
-        button.addEventListener(type, (e) => {
-            let t = mouse_mas[type]
-            e.target.style = getCss(
-                button_config[t[0]], 
-                button_config[t[1]]
-            );
-        })
-    });
+    main_pop.append(box_header)
+    main_pop.append(box_body)
+    
+    body.append(main_pop)
 
-    button.classList.add(button_config[4])
-    let box = document.querySelector(button_config[5])
-    box.style = "display: flex; justify-content: center; align-items: start; flex-direction: column;"
-    box.appendChild(button)
-    box.appendChild(dv)
-
-    // возвращает DOM element (кнопка, уже внедрена, 
-    // кнопку сохраняем для дальнейших манипуляций при желании)
-    return [button, send]
+    return [copybtn, send]
 }
 
 
 
 async function run_vp_extention_2345() {
 
+    const css_file = await get_config("style.css", false)
+    console.log(css_file)
     const settings =      await get_config("settings.json")
     console.log("settings", settings)
     const all_tables_sorted =     await GetTables(settings)
@@ -364,6 +491,8 @@ async function run_vp_extention_2345() {
         let default_values = {"shift": true, "date": true, "time": true, "name": true}
         
         const DAY_SHOP = info[1][2]
+
+        var type_of_page_to_copy = undefined
 
         function default_values_insert(values) {
 
@@ -493,7 +622,9 @@ async function run_vp_extention_2345() {
         return vp_list
     }
 
-    await ConnectCopyToButton(await InsertButton(settings), await scan_template(template_config))
+    await ConnectCopyToButton(await InsertButton(settings, css_file), await scan_template(template_config))
+
+
 }
 
 run_vp_extention_2345()
