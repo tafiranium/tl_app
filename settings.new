@@ -7,6 +7,18 @@
         "item": "#receipt-items table.items.table tbody tr"
     }
   },
+
+  "details": {
+            "shop":     [1, "a", true],
+            "seller":   [2, "a", true],       
+            "datetime": [3, "td", true],             
+            "traffic":  [19, "td", true],            
+            "dc":       [15, "td *", true],     
+            "buyer":    [16, "td *", true],     
+            "return":   [17, "", false], 
+            "comment":  [21, "td", true]             
+  },
+
   "interface": {
     "buttons": [],
     "boxes":   [],
