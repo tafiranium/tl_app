@@ -1,4 +1,7 @@
 {
+  "main" {
+    "size": 40
+  }
   "selectors": {
     "tables": {
         "main": "table#detail-view", 
