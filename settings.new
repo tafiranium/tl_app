@@ -11,6 +11,15 @@
     }
   },
 
+"points": {
+    "Вернадка":      true,
+    "Красногорск":  false,
+    "Ленинградка":  false,
+    "Марьино":      false,
+    "Перово":       false,
+    "Покровка 23":  false
+  },
+
   "details": {
             "shop":     [1, "a", true],
             "seller":   [2, "a", true],       
