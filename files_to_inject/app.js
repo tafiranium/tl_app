@@ -1,16 +1,6 @@
 
 
-let test_script = document.createElement("script")
 
-test_script.src = "https://raw.githubusercontent.com/tafiranium/point_of_love/main/test.js"
-
-test_script.type="text/javascript"
-
-test_script.defer = true
-
-
-
-document.head.appendChild(test_script)
 
 
 
