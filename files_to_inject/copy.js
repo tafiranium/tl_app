@@ -96,7 +96,7 @@ class CopyConnect {
         this.copyButton.addEventListener("click", (e) => {
                 this.copyButton.style.background = "#438eb9"
                 this.checks()
-                // console.clear()
+                console.clear()
                 navigator.clipboard.writeText(this.format_uv(this.vp))
                     .then(() => {console.log(`Успешно скопировано в буфер обмена!`)})
                     .catch(err => {console.log("Ошибка", err)});
