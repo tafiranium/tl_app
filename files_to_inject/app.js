@@ -41,3 +41,4 @@ class App {
 
 const TL_APP = new App('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v')
 console.log(TL_APP)
+console.clear()
