@@ -66,8 +66,8 @@ class CopyConnect {
         document.onkeyup = (e) => {
             if (this.key_buffer.includes(e.code)) {
                 if (this.key("AltLeft") && this.key("KeyS")) {
+                    console.clear()
                     if (this.checks()) {
-                        console.clear()
                         navigator.clipboard.writeText(this.format_uv(this.vp))
                             .then(() => {console.log(`Успешно скопировано в буфер обмена! (Alt+S)`)})
                             .catch(err => {console.log("Ошибка", err)}); 
