@@ -15,12 +15,12 @@ class VpTime {
         this.sec_start  =   60*60*this.start
         this.day_time   =   24*60*60
         
+        this.type_of_shift = -1 // проверочное число
+        this.getTypeShift()
+
         this.year    =  this.object.getFullYear()
         this.month   =  this.object.getMonth()+1
         this.day     =  this.object.getDate()
-
-        this.type_of_shift = -1 // проверочное число
-        this.getTypeShift()
 
         this.time_to_send = this.getTime()
         this.date_to_send = `${this.two(this.day)}.${this.two(this.month)}.${this.year}`
@@ -35,16 +35,13 @@ class VpTime {
     }
 
     getTypeShift() {
-        if (((this.sec_time > this.sec_end) & (this.sec_time > this.sec_start)) || 
-            ((this.sec_time < this.sec_end) & (this.sec_time < this.sec_start))) {
+        let first_night_part = !!((this.sec_time > this.sec_end) & (this.sec_time > this.sec_start))
+        let second_night_part = !!((this.sec_time < this.sec_end) & (this.sec_time < this.sec_start)) 
+            if (first_night_part || second_night_part) {
             // ночная смена вроде не понятно зачем здесь эта функция
             this.type_of_shift = false
-    
             // но мы делаем дату на 1 день меньше так как это все еще твоя смена брат
-            if (((this.sec_time > this.sec_end) & (this.sec_time < this.day_time))) {this.type_of_shift = false} else {
-                this.object.setDate(this.object.getDate() - 1)
-                this.type_of_shift = false
-            }
+            if (second_night_part) {this.object.setDate(this.object.getDate() - 1) }
     
         } else if ((this.sec_time < this.sec_end) & (this.sec_time >= this.sec_start)) {
            this.type_of_shift = true // дневная смена радуйся проценту как и твой писюн)
