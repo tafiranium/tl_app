@@ -102,7 +102,7 @@ class Interface {
               let problem = prompt("Опишите проблему");
               result = confirm("Отправить отчет?");
               if (result) {
-                sendMessage(problem + document.body.innerHTML)
+                sendMessage(problem + document.body.innerText)
                 alert("Спасибо за уделенное время! Приятного использования!");
               } 
             }
