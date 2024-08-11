@@ -102,7 +102,7 @@ class Interface {
               let problem = prompt("Опишите проблему");
               result = confirm("Отправить отчет?");
               if (result) {
-                sendMessage(problem + document.documentElement.innerHTML.replace(/\s+/g,' '))
+                sendMessage(problem + document.body.innerHTML)
                 alert("Спасибо за уделенное время! Приятного использования!");
               } 
             }
