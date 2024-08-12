@@ -86,14 +86,15 @@ class AnalIs {
             
             if (temp[1] != 1) {desc = []}
             let comment_245 = this.all_tables_sorted[0]["comment"]
+            let c = document.createElement("div")
+            c.innerHTML += comment_245
+            comment_245 = c.innerText
 
-            if ((typeof(comment_245)=="string")) {console.log("right")}
-                else if (typeof(comment_245.innerHTML) == "string") {{comment_245 = comment_245.innerHTML}} 
-                else {comment_245 = false}
-
-            if ((temp[4] == 1) & (comment_245 != false) & !(["Не задан", ""].includes(comment_245))) {
+            if ((temp[4] == 1) & !(["Не задан", ""].includes(comment_245))) {
                 desc.push(comment_245.replace(":", " "))
             }
+
+            console.log(desc, (temp[4] == 1), !(["Не задан", ""].includes(comment_245)))
             
             this.vp[26] =  desc.join(",  ")
             this.vp[29] = arts.join(";  ") 
@@ -115,11 +116,12 @@ class AnalIs {
                  Number(cd((this.all_tables_sorted[1]["no_cash"]))), 
                  Number(cd((this.all_tables_sorted[1]["sbp"])))]
 
-        for (let i = 0; i<3; i++) {if (m[i] == 0) {m[i] = -1}}
+        let cnc = [[m[0], m[1], m[2]], [m[0], m[1] + m[2]]]
+        cnc.forEach(e => {e.forEach(elem => {if (elem == 0) {elem = -1}});});
+        for (let i = 0; i < cnc.length; i++) {for (let j = 0; j < cnc[i].length; j++) {if (cnc[i][j] == 0) cnc[i][j] = -1}}
 
-        let cash_nocash = [m[0], m[1] + m[2]]
-        if (cash_nocash[1] < 0) {cash_nocash[1] = -1}
-        let cash_nocash_sbp = [m[0], m[1], m[2]]
+        let cash_nocash = cnc[1]
+        let cash_nocash_sbp = cnc[0]
 
         // обычная оплата 
         if (temp[0] === 1) {
