@@ -26,19 +26,30 @@ class App {
     }
 
     async main() {
+        console.clear()
         this.cfg          =                             await this.get_file("settings.new")
+        console.clear()
         this.int          =                                                 new Interface()
+        console.clear()
         this.table        =                                            new Tables(this.cfg)
+        console.clear()
         this.atb          =                                            this.table.get_all()
+        console.clear()
         this.tdtm         = new VpTime(this.atb[0]["table_sorted"]["datetime"].split(", "))
+        console.clear()
         this.analysis     =                  new AnalIs(this.atb, this.cfg, this.tdtm.tdtm)
+        console.clear()
         this.type_of_page =                                      this.analysis.type_of_page
+        console.clear()
         this.copy_class   =             new CopyConnect(this.analysis.vp, this.int.buttons, 
                                   this.type_of_page, this.int, this.atb[0]["table_sorted"])
+        console.clear()
         this.start_key = "qrt234_432fdgdf3*ffgdgdfgfdf"
+        console.clear()
     }
 }
 
 const TL_APP = new App('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v')
 console.log(TL_APP)
 console.clear()
+
