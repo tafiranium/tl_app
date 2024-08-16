@@ -79,9 +79,14 @@ class AnalIs {
             let count = 0
 
             items.forEach(e => {
-                if (e.is_good) {count+=Number(e.count)}
-                if (temp[3] == 1) {if (!(this.settings["stop"].includes(e.art))) {desc.push(e.name); arts.push(e.art)}} 
-                else {desc.push(e.name); arts.push(e.art)}
+                
+                if (temp[3] == 1) {
+                    if (!(this.settings["stop"].includes(e.art))) {
+                        desc.push(e.name); arts.push(e.art); if (e.is_good) {count+=Number(e.count);}
+                    }
+                } 
+
+                else {desc.push(e.name); arts.push(e.art); if (e.is_good) {count+=Number(e.count)};}
             }); 
             
             if (temp[1] != 1) {desc = []}
