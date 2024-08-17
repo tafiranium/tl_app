@@ -14,9 +14,10 @@
 
 class App {
 
-    constructor(start_key, args=false) {
+    constructor(start_key, console=false) {
         this.start_key = start_key
         this.main()
+        this.console = console
     }
 
     async get_file(salt, type=true) {
@@ -25,31 +26,32 @@ class App {
         } else                                          {console.log("Ошибка HTTP: " + response.status)}
     }
 
+    clear() {if (!this.console) {console.clear()}}
+
     async main() {
         console.clear()
         this.cfg          =                             await this.get_file("settings.new")
-        console.clear()
+        this.clear()
         this.int          =                                                 new Interface()
-        console.clear()
+        this.clear()
         this.table        =                                            new Tables(this.cfg)
-        console.clear()
+        this.clear()
         this.atb          =                                            this.table.get_all()
-        console.clear()
+        this.clear()
         this.tdtm         = new VpTime(this.atb[0]["table_sorted"]["datetime"].split(", "))
-        console.clear()
+        this.clear()
         this.analysis     =                  new AnalIs(this.atb, this.cfg, this.tdtm.tdtm)
-        console.clear()
+        this.clear()
         this.type_of_page =                                      this.analysis.type_of_page
-        console.clear()
+        this.clear()
         this.copy_class   =             new CopyConnect(this.analysis.vp, this.int.buttons, 
                                   this.type_of_page, this.int, this.atb[0]["table_sorted"])
-        console.clear()
+        this.clear()
         this.start_key = "qrt234_432fdgdf3*ffgdgdfgfdf"
-        console.clear()
+        this.clear()
     }
 }
 
 const TL_APP = new App('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v')
-console.log(TL_APP)
-console.clear()
+TL_APP.clear()
 
