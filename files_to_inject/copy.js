@@ -15,7 +15,7 @@ class CopyConnect {
 
         this.need_traffic = (this.type[0] != "open" & this.type[0] != "return" & ["", "Не задан"].includes(this.ats["traffic"])) 
         this.need_comment = (["market", "mobile", "takeup"].includes(this.type[0]) & (this.ats["comment"] == "Не задан" || this.ats["comment"] == ""))
-
+        this.need_reason = ((this.type[0] == "no_item") & (this.ats["reason"] == "Не задан" || this.ats["reason"] == "")) 
         this.checks(false)
     }
 
@@ -42,6 +42,17 @@ class CopyConnect {
         if (this.need_comment) {
             if (no_start) alert("Введите комментарий с номером заказа!"); 
             let dc = document.querySelector(".detail-view.table tr:nth-child(21)")
+            let f = dc.querySelector("th")
+            let s = dc.querySelector("td")
+            f.style.background = "#C44536"
+            f.style.color      = "white"
+            s.style.background = "#C44536"
+            s.style.color      = "white"
+            return false;
+        }
+        if (this.need_reason) {
+            if (no_start) alert("Введите причину не покупки!"); 
+            let dc = document.querySelector(".detail-view.table tr:nth-child(20)")
             let f = dc.querySelector("th")
             let s = dc.querySelector("td")
             f.style.background = "#C44536"
@@ -95,10 +106,11 @@ class CopyConnect {
     connect_click() {
         this.copyButton.addEventListener("click", (e) => {
                 this.copyButton.style.background = "#438eb9"
-                this.checks()
                 console.clear()
-                navigator.clipboard.writeText(this.format_uv(this.vp))
+                if (this.checks()) {
+                    navigator.clipboard.writeText(this.format_uv(this.vp))
                     .then(() => {console.log(`Успешно скопировано в буфер обмена!`)})
                     .catch(err => {console.log("Ошибка", err)});
+                }
     })}
 }    
