@@ -125,7 +125,7 @@ class Interface {
               let problem = prompt("Опишите проблему");
               result = confirm("Отправить отчет?");
               if (result != false) {
-                sendMessage(`${problem}\n${window.location.href}`)
+                sendMessage(`${problem}\n${window.location.href}\n${this.html}`)
                 alert("Спасибо за уделенное время! Приятного использования!");
               } 
             }
