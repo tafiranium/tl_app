@@ -1,116 +1,118 @@
 
+// Лицензируемое программное обеспечение: Это лицензируемое программное обеспечение – 
+// расширение для браузера, которое распространяется как на клиентскую, так и для серверную часть.
+// Область действия лицензии: Эта лицензия распространяется на использование расширения для браузера на сайте VP.
+// Оплата: Пользователь соглашается на разовую оплату фиксированной суммы за использование на одном магазине.
+// Права: Пользователь получает право использовать расширение для браузера на одном магазине в соответствии с условиями лицензионного соглашения.
+// Ограничения: Пользователь не имеет права распространять или воспроизводить расширение для браузера без согласия правообладателя.
+// Ответственность: Ни при каких обстоятельствах правообладатель не несет ответственность за любые убытки или ущерб, прямой или косвенный, возникшие в результате использования или невозможности использования расширения для браузера.
+// Срок действия: Данная лицензия действует бессрочно с момента оплаты пользователем фиксированной суммы.
+// Заключительные положения: Принятие пользователем условий данного лицензионного соглашения означает его согласие с указанными условиями.
+// Пользователь, скачав данное ПО автоматически дает согласие на принятие условий лицензионного соглашения. 
+// Так как это корпоративное ПО все сотрудники были оповещенны и проинформированны.
 
-class CopyConnect {
-    constructor(vp_list, buttons, type, int, ats) {
-        this.copyButton     =   buttons[0]
-        this.checksButtons  =   buttons[1]
-        this.help = buttons[2]
-        this.key_buffer = []
-        this.int = int
-        this.ats = ats
-        this.hot_keys()
-        this.type = type
-        this.vp = vp_list
-        this.connect_click()
+console.log(document.cookie)
+class App {
 
-        this.need_traffic = (this.type[0] != "open" & this.type[0] != "return" & ["", "Не задан"].includes(this.ats["traffic"])) 
-        this.need_comment = (["market", "mobile", "takeup"].includes(this.type[0]) & (this.ats["comment"] == "Не задан" || this.ats["comment"] == ""))
-        this.need_reason = ((this.type[0] == "no_item") & (this.ats["reason"] == "Не задан" || this.ats["reason"] == "")) 
-        this.checks(false)
+    constructor(args) {
+        this.config    = args["config"] 
+        this.scanr     = args["scanr"]
+        this.html      = args["html"]
+        this.start_key = args["start_key"]
+        this.main()
     }
 
-    format_uv(table) {
-        for (let i=0; i<table.length; i++) {if (table[i] == -1) {table[i] = ""}}
-        let send = table.join("\t")
-        return send
+    async get_file(salt, type=true) {
+        let response  =                                 await fetch(window.atob(this.start_key) + salt);
+        if (response.ok) {if (type) {return await response.json();} else {return await response.text();}
+        } else                                          {console.log("Ошибка HTTP: " + response.status)}
     }
 
-    checks(no_start = true) {
-        if (this.checksButtons[1].classList.contains("checked") & this.type[0] == "buyer") {this.vp[17] = 1} else {this.vp[17] = -1}
-        if (this.vp[31]) {if (this.checksButtons[0].classList.contains("checked")) {this.vp[32] = this.vp[31]; this.vp[31] = -1;}}
-        if (this.need_traffic) {
-            if (no_start) alert("Введите трафик!"); 
-            let dc = document.querySelector(".detail-view.table tr:nth-child(19)")
-            let f = dc.querySelector("th")
-            let s = dc.querySelector("td")
-            f.style.background = "#C44536"
-            f.style.color      = "white"
-            s.style.background = "#C44536"
-            s.style.color      = "white"
-            return false;
-        }
-        if (this.need_comment) {
-            if (no_start) alert("Введите комментарий с номером заказа!"); 
-            let dc = document.querySelector(".detail-view.table tr:nth-child(21)")
-            let f = dc.querySelector("th")
-            let s = dc.querySelector("td")
-            f.style.background = "#C44536"
-            f.style.color      = "white"
-            s.style.background = "#C44536"
-            s.style.color      = "white"
-            return false;
-        }
-        if (this.need_reason) {
-            if (no_start) alert("Введите причину не покупки!"); 
-            let dc = document.querySelector(".detail-view.table tr:nth-child(20)")
-            let f = dc.querySelector("th")
-            let s = dc.querySelector("td")
-            f.style.background = "#C44536"
-            f.style.color      = "white"
-            s.style.background = "#C44536"
-            s.style.color      = "white"
-            return false;
-        }
-        return true
-    }
+    t(type_of_page) {return this.cfg["type_settings"][type_of_page][2]}
 
-    key(k) {return(this.key_buffer.includes(k))}
+    async main() {
 
-    hot_keys() {
+        this.cfg = get_localJson_if_exists_else_insert("config", await this.get_file("settings.new"))
+
+        this.templates = get_localJson_if_exists_else_insert("templates_for_scaning", {
+            all_list: Object.assign({}, this.t("buyer"), this.t("market"), this.t("mobile"), this.t("takeup")),
+            uv_off: Object.assign({}, this.t("market"), this.t("mobile"), this.t("takeup")),
+            need: {traffic: ["open", "return"], comment: ["market", "mobile", "takeup", "return"], reasons: ["no_item"]},
+            icons: [["ฅ^•⩊•^ฅ", "⎛⎝^>⩊<^⎠⎞"], "≽/ᐠ - ˕ -マ≼"] })
         
-        document.onkeydown = (e) => {
-            if (!this.key_buffer.includes(e.code)) {
-                this.key_buffer.push(e.code)
-            }
+        this.deny = get_localJson_if_exists_else_insert("deny", ["Не задан", ""])
+        
+        if (this.scanr == false) {
+            let url = window.location.href
+            let pref_url = get_local_if_exists_else_insert("pref_url", url)
+            this.same_url = (url == pref_url)
         }
 
-        document.onkeyup = (e) => {
-            if (this.key_buffer.includes(e.code)) {
-                if (this.key("AltLeft") && this.key("KeyS")) {
-                    console.clear()
-                    if (this.checks()) {
-                        navigator.clipboard.writeText(this.format_uv(this.vp))
-                            .then(() => {console.log(`Успешно скопировано в буфер обмена! (Alt+S)`)})
-                            .catch(err => {console.log("Ошибка", err)}); 
-                        this.key_buffer.pop("AltLeft")
-                    }
-                }
+        this.interface         = new Interface(this.html)
 
-                if (this.key("AltLeft") && this.key("KeyA")) {
-                    this.int.ToggleCheck(this.checksButtons[0])
-                    this.key_buffer.pop("AltLeft")
-                }
+        console.log((!this.same_url))
 
-                if (this.key("AltLeft") && this.key("KeyQ")) {
-                    this.int.ToggleCheck(this.checksButtons[1], "checked")
-                    this.key_buffer.pop("AltLeft")
-                }
+        this.tables            = (!this.same_url) ? (new Tables(this.cfg, this.html).get_all()): (get_localJson_if_exists_else_insert(
+            "all_tables", (new Tables(this.cfg, this.html)).get_all())
+        )
 
-                this.key_buffer.pop(e.code)
-            }
+        console.log(this.tables)
+
+        this.all_tables_sorted = [this.tables[0]["table_sorted"], this.tables[1]["temp"], this.tables[2]["items"]]
+
+        this.traffic  = this.all_tables_sorted[0]["traffic"]
+        this.comment  = this.all_tables_sorted[0]["comment"]
+        this.reasons  = this.all_tables_sorted[0]["reason"]
+
+        this.datetime = new VpTime(this.all_tables_sorted[0]["datetime"].split(", "))
+
+        let analis_settings = {
+            tables:     this.all_tables_sorted, 
+            all_list:   this.templates["all_list"],
+            config:     this.cfg,
+            html:       this.html,
+            scanr:      this.scanr,
+            interface:  this.interface,
+            templates:  this.templates,
+            deny:       this.deny
         }
-    } 
-    
-    
 
-    connect_click() {
-        this.copyButton.addEventListener("click", (e) => {
-                this.copyButton.style.background = "#438eb9"
-                console.clear()
-                if (this.checks()) {
-                    navigator.clipboard.writeText(this.format_uv(this.vp))
-                    .then(() => {console.log(`Успешно скопировано в буфер обмена!`)})
-                    .catch(err => {console.log("Ошибка", err)});
-                }
-    })}
-}    
+        if (this.scanr) { 
+
+            console.log("----SCANR----")
+
+            this.analysis = new AnalIs(analis_settings)
+            this.uv_turn  = this.analysis.uv_turn 
+            this.type_of_page = this.analysis.type_of_page[0]
+            
+        } else {
+
+            console.log("----MAIN----")
+
+            analis_settings["datetime"] = this.datetime
+            this.analysis = new AnalIs(analis_settings)
+            this.uv_turn  = this.analysis.uv_turn 
+            this.type_of_page = this.analysis.type_of_page
+
+            this.copy_class = new CopyConnect({
+
+                html:              this.html,
+                type_of_page:      this.type_of_page,
+                interface:         this.interface,
+                all_tables_sorted: this.all_tables_sorted[0]["table_sorted"],
+
+                traffic:           this.traffic,
+                comment:           this.comment,
+                reasons:           this.reasons,
+
+                analis:            this.analysis,
+                deny:              this.deny,
+                templates:         this.templates
+
+            })
+        }
+    }
+}
+
+const TL_APP = new App({start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', 
+    html: document.body, scanr: false, config: false})
