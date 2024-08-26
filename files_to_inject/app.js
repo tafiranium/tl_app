@@ -81,4 +81,4 @@ class App {
 const TL_APP = new App({start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', 
     html: document.body, config: false})
 
-console.log(TL_APP)
+console.clear()
