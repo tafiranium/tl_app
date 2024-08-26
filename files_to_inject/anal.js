@@ -9,43 +9,30 @@ class AnalIs {
         this.buttons           = args["buttons"]
         this.temp              = this.cfg["type_settings"] 
         this.html              = args["html"]
-        this.scanr             = args["scanr"]
         this.temps             = args["templates"]
         this.all_list          = args["templates"]["all_list"]
         this.deny              = args["deny"]
-        this.tor               = false
-        
 
-        if (this.scanr)  {
+        this.vp  =  Array(this.cfg["main"]["size"]).fill(-1)
+        this.def =  this.cfg["default"]
+        this.tm  =  args["datetime"].tdtm
+        this.ts  =  {}
+        this.refuse_count
 
-            this.uv_turn = Object.keys(this.temps["uv_off"]).includes(this.traffic) 
-            if (this.deny.includes(this.traffic)) {this.ready = this.PromptRedirect();  console.log("traffic-deny");}
-            this.type_of_page = this.TypeOfPage()
+        Object.keys(this.temp).forEach(element => {this.ts["t" + element.replace("_", "")] = this.temp[element]});
 
-        } else {
+        this.type_of_page = this.TypeOfPage()
+        this.current_temp = this.temp[this.type_of_page[0]][0]
 
-            this.vp  =  Array(this.cfg["main"]["size"]).fill(-1)
-            this.def =  this.cfg["default"]
-            this.tm  =  args["datetime"].tdtm
-            this.ts  =  {}
-
-            Object.keys(this.temp).forEach(element => {this.ts["t" + element.replace("_", "")] = this.temp[element]});
-    
-            this.type_of_page = this.TypeOfPage()
-            this.add_page     = false
-    
-            this.current_temp = this.temp[this.type_of_page[0]][0]
-    
-            for (let i=1; i<this.current_temp.length; i++) {
-                let e = this.current_temp[i]
-                if (e.length == 1 & e[0] == false) {
-                    this.current_temp[i] = Array(this.def[2][i]).fill(-1)
-                }
+        for (let i=1; i<this.current_temp.length; i++) {
+            let e = this.current_temp[i]
+            if (e.length == 1 & e[0] == false) {
+                this.current_temp[i] = Array(this.def[2][i]).fill(-1)
             }
-
-            this.uv_turn = Object.keys(this.temps["uv_off"]).includes(this.traffic) 
-            this.Scan(this.current_temp) 
         }
+
+        this.uv_turn = Object.keys(this.temps["uv_off"]).includes(this.traffic) 
+        this.Scan(this.current_temp) 
         
     }
 
@@ -74,22 +61,18 @@ class AnalIs {
         if (this.uv_turn) {this.vp[this.all_list[this.traffic]]                     = otemp[0]} // заказы 22-23 самовывоз приложение
     }
 
-    enter_group(temp, otemp, type_of_return) {
+    enter_group(temp, otemp) {
 
         this.vp[3] = temp[0]  // вход 
         this.vp[4] = temp[3]  // не клиент 
-
-        if (this.type_of_page[0] == "return" & this.ready) {
-            if (!type_of_return.uv_turn) {this.vp[this.all_list[type_of_return.traffic]] =  0}  // ув (5 - 16)
-            if (type_of_return.uv_turn) {this.vp[21]                                     =  0}  // учет заказов
-            if (type_of_return.uv_turn) {this.vp[this.all_list[type_of_return.traffic]]  =  0}  // заказы 22-23 самовывоз приложение            
-        } else {this.standart(temp, otemp)}
+        this.standart(temp, otemp)
     }
 
     items_group(temp) {
         console.log(temp)
         let items = this.all_tables_sorted[2]
         if (Object.keys(items).length > 0) {
+
             let desc = []
             let arts = []
             let count = 0
@@ -117,13 +100,27 @@ class AnalIs {
             
             this.vp[26]  =  desc.join(",  ")
             this.vp[29]  =  arts.join(";  ") 
+
+            console.log(temp[2], temp[0])
+
+            this.refuse_count = true
+
             if (temp[2] == -1) {this.vp[29] = temp[2]}
             if (temp[0] != 1) { this.vp[27] = temp[0]; this.vp[28] = temp[0] } 
-            else { this.vp[27] = 1; this.vp[28] = count; }
+            else { 
+
+                if (count > 0) { this.vp[27] = 1; this.vp[28] = count; this.refuse_count = true;
+                } else { 
+                    this.refuse_count = false; 
+                    this.vp[27] = 0; this.vp[28] = 0 
+                    this.vp[this.all_list[this.traffic]] = 0; this.vp[3] = 0;
+                }
+                
+            }
         }
     }
 
-    async money_group(temp, type_of_return) {    
+    async money_group(temp) {    
         
         function cd(n) {
             let num = n.split(".")
@@ -137,79 +134,38 @@ class AnalIs {
 
         let cnc = [[m[0], m[1], m[2]], [m[0], m[1] + m[2]]]
         cnc.forEach(e => {e.forEach(elem => {if (elem == 0) {elem = -1}});});
-        for (let i = 0; i < cnc.length; i++) {for (let j = 0; j < cnc[i].length; j++) {if (cnc[i][j] == 0) cnc[i][j] = -1}}
+        for (let i = 0; i < cnc.length; i++) {for (let j = 0; j < cnc[i].length; j++) {if (cnc[i][j] == 0 || !this.refuse_count) cnc[i][j] = -1}}
 
         let cash_nocash = cnc[1]
         let cash_nocash_sbp = cnc[0]
 
-        if ((this.type_of_page[0] == "return") & (type_of_return != false)) {
-                
-                if (type_of_return.ready) {
-                    if (type_of_return.type_of_page[0] == "mobile") {
+        // обычная оплата 
+        if (temp[0] === 1) {
+            this.vp[30] = cash_nocash_sbp[0]
+            this.vp[31] = cash_nocash_sbp[1]
+            this.vp[32] = cash_nocash_sbp[2]
 
-                        if (cash_nocash[0] != "-1") {this.vp[33] = "-"+cash_nocash[0]}   
-                        if (cash_nocash[1] != "-1") {this.vp[34] = "-"+cash_nocash[1]}
-    
-                    } else if (type_of_return.type_of_page[0] == "market") {
-                        console.log("market return")
-                    } else if (type_of_return.type_of_page[0] == "buyer" || this.deny.includes(type_of_return.traffic)) {
-    
-                        this.vp[37] = cash_nocash[0]
-                        this.vp[38] = cash_nocash[1]
-    
-                    } 
-                } else {
-                    this.vp[37] = cash_nocash[0]
-                    this.vp[38] = cash_nocash[1]
-                } 
+        // оплата заказа
+        } else if (temp[1] === 1) {
+            this.vp[33] = cash_nocash[0]
+            this.vp[34] = cash_nocash[1]
 
-            } else {
-
-            // обычная оплата 
-            if (temp[0] === 1) {
-                this.vp[30] = cash_nocash_sbp[0]
-                this.vp[31] = cash_nocash_sbp[1]
-                this.vp[32] = cash_nocash_sbp[2]
-
-            // оплата заказа
-            } else if (temp[1] === 1) {
-                this.vp[33] = cash_nocash[0]
-                this.vp[34] = cash_nocash[1]
-            }
+        // возврат заказа
+        } else if (temp[2] === 1) {
+            this.vp[37] = cash_nocash[0]
+            this.vp[38] = cash_nocash[1]
         }
     }
 
     async Scan(temp) {
-
-        this.tor = await this.tor_injector()
-        
         this.default_group(temp[0])
-        this.enter_group(temp[1], this.current_temp[2], this.tor)
+        this.enter_group(temp[1], this.current_temp[2])
         this.items_group(temp[3])
-        await this.money_group(temp[4], this.tor)
+        await this.money_group(temp[4])
         return this.vp
     } 
 
-    async get_tor() {
-        if (this.type_of_page[0] === "return") {
-            let url = "https://" + window.location.host + this.html.querySelector(".detail-view tr:nth-child(17) a").getAttribute("href")
-            if (url) {
-                let result = false
-                let r = await get_page(url).then(r => result = r);
-                return result
-            }
-        } 
-        return false;
-    }
-
-    PromptRedirect() {
-        let result = confirm("Исходный чек заполнен не верно, перейти к проблемному чеку?");
-        if (result) {window.location.replace(this.scanr)} else {return false}
-    }
-
     TypeOfPage() {
-
-        console.log(this.all_tables_sorted)
 
         function one_check(name, ats) {
             let siz = Object.keys(ats[2]).length
@@ -217,24 +173,31 @@ class AnalIs {
             return false
         }
 
-        function check(type, arg, add, ats, temp) {
-            // console.log(add, temp[add][2], ats[0]["traffic"])
-            if (type == 1) {return (temp[add][2][ats[0]["traffic"]]  != undefined)}
-            if (type == 2)               {return one_check(arg, ats)}
-            console.log(arg)
-            if (type == 3)               {return (ats[arg[0]][arg[1]]
-                    .classList.contains(arg[2]) != true)}
+        function check(arg) {
+            if (arg["type"] == 1) {return (Object.keys(arg["template"][arg["part"]][2]).includes(arg["all_tables"][0]["traffic"]))}
+            if (arg["type"] == 2) {return one_check(arg["argument"], arg["all_tables"])}
+            if (arg["type"] == 3) {return (arg["all_tables"][arg["argument"][0]][arg["argument"][1]]
+                    .classList.contains(arg["argument"][2]) != true)}
         } 
-        // console.log(this.all_tables_sorted, this.temp)
 
         let cluv = {} 
 
         Object.keys(this.temp).forEach(element => {
-            let cfg = this.temp[element][1]
-            cluv[element] = check(cfg[0], cfg[1], element, 
-                this.all_tables_sorted, this.temp)
-        }); cluv["empty"] = false
 
+            let cfg = this.temp[element][1]
+
+            let send = {
+                "type": cfg[0], 
+                "argument": cfg[1], 
+                "part": element, 
+                "all_tables": this.all_tables_sorted, 
+                "template": this.temp
+            }
+
+            cluv[element] = check(send)
+
+        }); cluv["empty"] = false
+        
         let t = this.all_tables_sorted[0]
         let enter = this.cfg["enter"].includes(t["traffic"])
         let dc = !!((t["dc"] != "Не задан") & (t["buyer"] != "Не задан"))
@@ -251,39 +214,6 @@ class AnalIs {
         no_buyer.forEach(x => {let s = end_r(x); if (s) {result = s}});
 
         if (!result) {result = "empty"}
-        console.log(result)
         return result
     }
-
-    async tor_injector() {
-        this.tor = await this.get_tor()
-        if (this.tor) {
-            let relement = document.createElement("div") 
-            relement.innerHTML = this.tor
-            relement.querySelector(".main-content")
-            let tp = this.cfg["type_settings"]
-            let check_if_comment = Object.assign({}, tp["market"][2], tp["mobile"][2], tp["takeup"][2])
-
-            this.add_page = new App({
-                start_key: "aHRfdsfJdfd3242_Dfss", html: relement, 
-                scanr: "https://" + window.location.host + this.html.querySelector(".detail-view tr:nth-child(17) a").getAttribute("href"), 
-                config: this.cfg}
-            )
-
-            console.log(this.add_page)
-
-            this.add_page_type = this.add_page.type_of_page
-            console.log("----MAIN----")
-            
-            this.scanr = this.add_page.scanr
-            
-            if (this.add_page.traffic in check_if_comment) {
-                if (this.deny.includes(this.add_page.comment.trim())) {ready_comment = this.PromptRedirect();  console.log("comment-deny")}  
-            }
-
-            return this.add_page
-        }
-        return false
-    }
 }
-
