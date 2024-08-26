@@ -1,118 +1,179 @@
 
-// Лицензируемое программное обеспечение: Это лицензируемое программное обеспечение – 
-// расширение для браузера, которое распространяется как на клиентскую, так и для серверную часть.
-// Область действия лицензии: Эта лицензия распространяется на использование расширения для браузера на сайте VP.
-// Оплата: Пользователь соглашается на разовую оплату фиксированной суммы за использование на одном магазине.
-// Права: Пользователь получает право использовать расширение для браузера на одном магазине в соответствии с условиями лицензионного соглашения.
-// Ограничения: Пользователь не имеет права распространять или воспроизводить расширение для браузера без согласия правообладателя.
-// Ответственность: Ни при каких обстоятельствах правообладатель не несет ответственность за любые убытки или ущерб, прямой или косвенный, возникшие в результате использования или невозможности использования расширения для браузера.
-// Срок действия: Данная лицензия действует бессрочно с момента оплаты пользователем фиксированной суммы.
-// Заключительные положения: Принятие пользователем условий данного лицензионного соглашения означает его согласие с указанными условиями.
-// Пользователь, скачав данное ПО автоматически дает согласие на принятие условий лицензионного соглашения. 
-// Так как это корпоративное ПО все сотрудники были оповещенны и проинформированны.
 
-console.log(document.cookie)
-class App {
+class CopyConnect {
 
     constructor(args) {
-        this.config    = args["config"] 
-        this.scanr     = args["scanr"]
-        this.html      = args["html"]
-        this.start_key = args["start_key"]
-        this.main()
-    }
 
-    async get_file(salt, type=true) {
-        let response  =                                 await fetch(window.atob(this.start_key) + salt);
-        if (response.ok) {if (type) {return await response.json();} else {return await response.text();}
-        } else                                          {console.log("Ошибка HTTP: " + response.status)}
-    }
+        this.traffic  = args["traffic"]
+        this.comment  = args["comment"]
+        this.reasons  = args["reasons"]
 
-    t(type_of_page) {return this.cfg["type_settings"][type_of_page][2]}
+        this.all_list = args["templates"]["all_list"]
+        this.html     = args["html"]
 
-    async main() {
+        this.all_tables_sorted   = args["tables"]
+        this.interface      =   args["interface"]
+        this.analis              = args["analis"]
 
-        this.cfg = get_localJson_if_exists_else_insert("config", await this.get_file("settings.new"))
+        this.temp = args["templates"]
+        this.cat = this.temp["icons"]
 
-        this.templates = get_localJson_if_exists_else_insert("templates_for_scaning", {
-            all_list: Object.assign({}, this.t("buyer"), this.t("market"), this.t("mobile"), this.t("takeup")),
-            uv_off: Object.assign({}, this.t("market"), this.t("mobile"), this.t("takeup")),
-            need: {traffic: ["open", "return"], comment: ["market", "mobile", "takeup", "return"], reasons: ["no_item"]},
-            icons: [["ฅ^•⩊•^ฅ", "⎛⎝^>⩊<^⎠⎞"], "≽/ᐠ - ˕ -マ≼"] })
+        this.buttons        =   this.interface.buttons
+        this.copyButton     =   this.buttons[0]
+        this.checksButtons  =   this.buttons[1]
+        this.cat_button     =   this.buttons[2]
+
+        this.deny = args["deny"]
+        this.key_buffer     = []
+        this.hot_keys()
         
-        this.deny = get_localJson_if_exists_else_insert("deny", ["Не задан", ""])
+
+        this.type = this.analis.type_of_page[0]
+        this.vp   = this.analis.vp
+
+        this.connect_click()
+        let need = this.temp["need"]
         
-        if (this.scanr == false) {
-            let url = window.location.href
-            let pref_url = get_local_if_exists_else_insert("pref_url", url)
-            this.same_url = (url == pref_url)
-        }
+        console.log(!need["traffic"].includes(this.type))
 
-        this.interface         = new Interface(this.html)
+        this.need_traffic =  (!need["traffic"].includes(this.type)  &  this.deny.includes(this.traffic)) 
+        this.need_comment =  (need["comment"].includes(this.type)   &  this.deny.includes(this.comment))
+        this.need_reasons  = (need["reasons"].includes(this.type)   &  this.deny.includes(this.reasons)) 
+        
+        this.not_allow = (this.need_reasons || this.need_comment || this.need_traffic)
 
-        console.log((!this.same_url))
+        if (this.not_allow) {this.cat_button.innerHTML = this.cat[1]} else {
 
-        this.tables            = (!this.same_url) ? (new Tables(this.cfg, this.html).get_all()): (get_localJson_if_exists_else_insert(
-            "all_tables", (new Tables(this.cfg, this.html)).get_all())
-        )
+            this.cat_button.innerHTML = this.cat[0][0]
 
-        console.log(this.tables)
-
-        this.all_tables_sorted = [this.tables[0]["table_sorted"], this.tables[1]["temp"], this.tables[2]["items"]]
-
-        this.traffic  = this.all_tables_sorted[0]["traffic"]
-        this.comment  = this.all_tables_sorted[0]["comment"]
-        this.reasons  = this.all_tables_sorted[0]["reason"]
-
-        this.datetime = new VpTime(this.all_tables_sorted[0]["datetime"].split(", "))
-
-        let analis_settings = {
-            tables:     this.all_tables_sorted, 
-            all_list:   this.templates["all_list"],
-            config:     this.cfg,
-            html:       this.html,
-            scanr:      this.scanr,
-            interface:  this.interface,
-            templates:  this.templates,
-            deny:       this.deny
-        }
-
-        if (this.scanr) { 
-
-            console.log("----SCANR----")
-
-            this.analysis = new AnalIs(analis_settings)
-            this.uv_turn  = this.analysis.uv_turn 
-            this.type_of_page = this.analysis.type_of_page[0]
-            
-        } else {
-
-            console.log("----MAIN----")
-
-            analis_settings["datetime"] = this.datetime
-            this.analysis = new AnalIs(analis_settings)
-            this.uv_turn  = this.analysis.uv_turn 
-            this.type_of_page = this.analysis.type_of_page
-
-            this.copy_class = new CopyConnect({
-
-                html:              this.html,
-                type_of_page:      this.type_of_page,
-                interface:         this.interface,
-                all_tables_sorted: this.all_tables_sorted[0]["table_sorted"],
-
-                traffic:           this.traffic,
-                comment:           this.comment,
-                reasons:           this.reasons,
-
-                analis:            this.analysis,
-                deny:              this.deny,
-                templates:         this.templates
-
+            this.cat_button.addEventListener("mouseover", () => {
+                this.cat_button.innerHTML       =  this.cat[0][1]; 
+                this.cat_button.style.fontSize  = "13px"; 
             })
+
+            this.cat_button.addEventListener("mouseout", () => {
+                this.cat_button.innerHTML       =  this.cat[0][0]; 
+                this.cat_button.style.fontSize  = "22px";
+            })
+
+        } this.checks(false);
+    }
+
+    format_uv(table) { return table.map((e) => ((e == -1) ? "" : e)).join("\t") }
+    checked(btn) {return btn.classList.contains("checked")}
+
+    checks(no_start = true) {
+
+        let template = {
+            "traffic": ["Введите трафик!", [19], this.need_traffic, false],
+            "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
+                         market: "Введите комментарий с номером заказа!", 
+                         no_item: "Опишите непокупку (обстоятельства, причина)"
+            }, [21], this.need_comment, true],
+            "reasons": ["Введите причину не покупки!", [20], this.need_reasons, false]
+        }
+
+        for (let i in template) {
+
+            let msg = template[i][0]
+            let num = template[i][1]
+            let che = template[i][2]
+            let tra = template[i][3]
+
+            if (che) {
+                console.log(i, tra. msg)
+                if (tra) { msg = msg[this.type] }
+                if (no_start) alert(msg); num = num.map((n) => {return this.html.querySelector(`.detail-view.table tr:nth-child(${n})`)});
+                num.map((x) => {[x.querySelector("th"), x.querySelector("td")].map((e) => {e.style.background="#C44536"; e.style.color="white"})})
+            }
+        } 
+
+        if (!this.not_allow) {
+
+            if (this.checked(this.checksButtons[1]) & this.type == "buyer") { this.vp[17] = 1
+                if (this.checked(this.checksButtons[2]) & this.type == "buyer") { this.vp[17] = 0
+                } else { this.vp[17] = 1 }
+            } else {this.vp[17] = -1}
+
+            if (this.analis.refuse_count) {
+                if (this.checked(this.checksButtons[2]) & this.type == "buyer") {
+                    if (!!((this.vp[3] == 1) & (this.vp[this.all_list[this.traffic]] == 1))) {
+                        this.vp[this.all_list[this.traffic]] = 0; this.vp[3] = 0;
+                        if (this.vp[17] != -1) {this.vp[17] = 0}
+                        if ((this.vp[27] != -1) & (this.vp[27] == 1)) {this.vp[27] = 0}
+                    };
+                
+                } else if (!this.checked(this.checksButtons[2]) & this.type == "buyer") {
+                    if (!!((this.vp[3] == 0) & (this.vp[this.all_list[this.traffic]] == 0))) {
+                        this.vp[this.all_list[this.traffic]] = 1; this.vp[3] = 1;
+                        if (this.vp[17] != -1) {this.vp[17] = 1}
+                        if (this.vp[27] != -1 & (this.vp[27] == 0)) {this.vp[27] = 1}
+                    };
+                }
+            }
+            
+            
+            let NoNe = ["", "-1", -1]
+            if ((this.vp[31] != -1) || (this.vp[32] != -1)) {
+
+                if (this.checked(this.checksButtons[0])) {
+
+                    if (!NoNe.includes(this.vp[31])) {
+                        this.vp[32] = this.vp[31]; 
+                        this.vp[31] = -1;
+                    }
+
+                } else if (!NoNe.includes(this.vp[32])) {
+                        this.vp[31] = this.vp[32];  
+                        this.vp[32] = -1;
+                }
+            }
+        } else {return [false, this.vp]} return [true, this.vp];
+    } 
+
+    key(k) {return(this.key_buffer.includes(k))}
+
+    clipText(msg, hot=false) {
+        if (this.checks(true)[0] == true) {
+
+            navigator.clipboard.writeText(this.format_uv(msg))
+                .then(() => {console.log(`Успешно скопировано в буфер обмена! (Alt+S)`)})
+                .catch(err => {console.log("Ошибка", err)}); 
+
+            if (hot) this.key_buffer.pop("AltLeft")
         }
     }
-}
 
-const TL_APP = new App({start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', 
-    html: document.body, scanr: false, config: false})
+    hot_keys() {
+        
+        document.onkeydown = (e) => {
+            if (!this.key_buffer.includes(e.code)) {
+                this.key_buffer.push(e.code)
+            }
+        }
+
+        document.onkeyup = (e) => {
+
+            if (this.key_buffer.includes(e.code)) {
+
+                if (this.key("AltLeft") && this.key("KeyS")) { this.clipText(this.vp, true)}
+
+                let template = {"A": 0, "Q": 1, "W": 2}
+                for (let i in template) {
+                    if (this.key("AltLeft") && this.key(`Key${i}`)) {
+                        this.interface.ToggleCheck(this.checksButtons[template[i]])
+                        this.key_buffer.pop("AltLeft")
+                    }
+                }
+
+                this.key_buffer.pop(e.code)
+            }
+        }
+    } 
+
+    connect_click() {
+        this.copyButton.addEventListener("click", (e) => {
+                this.copyButton.style.background = "rgb(238, 238, 238)"
+                this.clipText(this.vp, false)
+    })}
+}    
