@@ -1,11 +1,9 @@
 
 class Tables {
-    
-    constructor(settings, html) {
+    constructor(settings) {
 
-        this.html   =   html
         this.cfg    =   settings
-        this.sel    =   this.cfg["selectors"]["tables"]
+        this.sel     =   this.cfg["selectors"]["tables"]
 
         this.mbase  =  this.set_table("main")
         this.money  =  this.set_table("mone")
@@ -15,8 +13,8 @@ class Tables {
     }
     
     set_table(name, findall=false) { 
-        if (findall) {return this.html.querySelectorAll(this.sel[name])} 
-        else            {return this.html.querySelector(this.sel[name])}
+        if (findall) {return document.querySelectorAll(this.sel[name])} 
+        else            {return document.querySelector(this.sel[name])}
     }
 
     get_all() {
@@ -85,6 +83,7 @@ class Item {
         this.count  =   undefined
     }
 }
+
 
 class Items {
     constructor(html_list, settings) {
