@@ -63,7 +63,7 @@ class CopyConnect {
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
-
+        console.clear()
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
