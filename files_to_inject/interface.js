@@ -148,6 +148,7 @@ class Interface {
     }
 
     ToggleCheck(el, cls="checked") {
+        console.clear()
         let colors = ["rgb(238, 238, 238)", "#bdbdbd"]
         el.classList.toggle(cls)
         if (this.check(el)) {el.style.background = colors[1]} else {el.style.background = colors[0]}
