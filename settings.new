@@ -15,7 +15,9 @@
         "item": "#receipt-items table.items.table tbody tr"
     }
   },
-
+"enames": {
+   "0KfQsNC+INCnLg==": "0KbQsNC+INCn0LbRjdC90Ywt0KXQsNC+" 
+}, 
 "points": {
     "Вернадка":      true,
     "Красногорск":  false,
