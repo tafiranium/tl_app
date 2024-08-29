@@ -51,6 +51,8 @@ class AnalIs {
         if (this.def[0]["date"]) {this.vp[this.def[1]["date"]]            = this.tm[1]}   // дата   
         if (this.def[0]["time"]) {this.vp[this.def[1]["time"]]            = this.tm[2]}   // время 
         let seller = this.all_tables_sorted[0]["seller"].trim().split(" ").filter((e) => !e.includes("-")).join(" ")
+        let seller_hash = btoa(unescape(encodeURIComponent(seller)))
+        if (Object.keys((this.cfg["enames"])).includes(seller_hash)) seller = decodeURIComponent(escape(atob(this.cfg["enames"][seller_hash])))
         if (this.def[0]["name"]) {this.vp[this.def[1]["name"]] = seller}   // имя продавца
 
     }
