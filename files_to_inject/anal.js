@@ -128,7 +128,7 @@ class AnalIs {
         function cd(n) {
             let num = n.split(".")
             if (num[1] == "00") {return num[0]} 
-            else { if (num[1][1] == "0") {num[1] = num[1][0]}; return num.join("."); }
+            else { if (num[1][1] == "0") {num[1] = num[1][0]}; return num.join(","); }
         }
 
         let m = [Number(cd((this.all_tables_sorted[1]["cash"]))), 
