@@ -17,7 +17,7 @@ class AnalIs {
         this.def =  this.cfg["default"]
         this.tm  =  args["datetime"].tdtm
         this.ts  =  {}
-        this.refuse_count
+        this.refuse_count = false
 
         Object.keys(this.temp).forEach(element => {this.ts["t" + element.replace("_", "")] = this.temp[element]});
 
@@ -136,8 +136,8 @@ class AnalIs {
                  Number(cd((this.all_tables_sorted[1]["sbp"])))]
 
         let cnc = [[m[0], m[1], m[2]], [m[0], m[1] + m[2]]]
-        cnc.forEach(e => {e.forEach(elem => {if (elem == 0) {elem = -1}});});
-        for (let i = 0; i < cnc.length; i++) {for (let j = 0; j < cnc[i].length; j++) {if (cnc[i][j] == 0 || !this.refuse_count) cnc[i][j] = -1}}
+        cnc.forEach(e => {e.forEach(elem => {if (elem == 0) {elem = -1}})});
+        for (let i = 0; i < cnc.length; i++) {for (let j = 0; j < cnc[i].length; j++) {if (cnc[i][j] == 0 || !this.refuse_count) {cnc[i][j] = -1} else {cnc[i][j] = cnc[i][j].toString().trim().split(".").join(",")}}}
 
         let cash_nocash = cnc[1]
         let cash_nocash_sbp = cnc[0]
