@@ -95,7 +95,7 @@ class AnalIs {
             let comment_245 = this.all_tables_sorted[0]["comment"]
             let c = document.createElement("div")
             c.innerHTML += comment_245
-            comment_245 = c.innerText
+            comment_245 = c.innerText.replace(/[\r\n\t]+/g, " ")
 
             if ((temp[4] == 1) & !(["Не задан", ""].includes(comment_245))) {
                 desc.push(comment_245.replace(":", " "))
