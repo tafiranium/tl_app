@@ -12,7 +12,8 @@
         "main": "table#detail-view", 
         "mone": "table#price-detail-view", 
         "sale": "#yw2", 
-        "item": "#receipt-items table.items.table tbody tr"
+        "item": "#receipt-items table.items.table tbody tr",
+	"coun": "div#receipt-items div.summary"
     }
   },
 "enames": {
