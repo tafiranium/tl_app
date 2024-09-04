@@ -1,6 +1,7 @@
 class VpTime {
-    constructor(time_obj=false, interval=[10, 22]) {
-        
+
+    async run(time_obj=false, interval=[10, 22]) {
+
         this.datetime_list =   time_obj
         this.start =        interval[0]
         this.end =          interval[1]
@@ -24,9 +25,7 @@ class VpTime {
 
         this.time_to_send = this.getTime()
         this.date_to_send = `${this.two(this.day)}.${this.two(this.month)}.${this.year}`
-        this.tdtm = [this.type_of_shift, this.date_to_send, this.time_to_send]
-        console.log(this.tdtm)
-
+        return [this.type_of_shift, this.date_to_send, this.time_to_send]
     }
 
     two(number) {
