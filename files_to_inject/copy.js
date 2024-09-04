@@ -205,3 +205,4 @@ class CopyConnect {
                 this.clipText(this.vp, false)
     })}
 }    
+console.clear()
