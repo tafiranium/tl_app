@@ -1,24 +1,34 @@
 class App {
 
     constructor(args) {
-        this.config    = args["config"] 
-        this.html      = args["html"]
+        this.CLASS_NAME = "App"
+        this.config = args["config"] 
+        this.html = args["html"]
         this.start_key = args["start_key"]
         this.main()
     }
 
     async get_file(salt, type=true) {
-        let response  =                                 await fetch(window.atob(this.start_key) + salt);
-        if (response.ok) {if (type) {return await response.json();} else {return await response.text();}
-        } else                                          {console.log("Ошибка HTTP: " + response.status)}
+
+        let FU_NAME = "get_file"
+        log("async function", `${FU_NAME}(${salt}, ${type})`, [this.CLASS_NAME, FU_NAME])
+
+        let response  = await fetch(window.atob(this.start_key) + salt);
+        if (response.ok) {
+            if (type) {return await response.json()} 
+            else {return await response.text()}
+        } else {console.log("Ошибка HTTP: " + response.status)}
     }
 
     t(type_of_page) {return this.cfg["type_settings"][type_of_page][2]}
 
     async main() {
 
-        this.cfg = await this.get_file("settings.new")
-        console.log(this.cfg)
+        let FU_NAME = "main"
+        log("async function", `${FU_NAME}()`, [this.CLASS_NAME, FU_NAME])
+
+        this.cfg = await this.get_file("settings.new").catch(err => {console.log("[App.main] GET_CONFIG_ERROR", err)})
+        log("config: ", this.cfg, [this.CLASS_NAME, FU_NAME])
 
         this.templates = {
             all_list: Object.assign({}, this.t("buyer"), this.t("market"), this.t("mobile"), this.t("takeup")),
@@ -27,43 +37,58 @@ class App {
             icons: [["ฅ^•⩊•^ฅ", "⎛⎝^>⩊<^⎠⎞"], "≽/ᐠ - ˕ -マ≼"] }
         
         this.deny = ["Не задан", ""]
-        this.interface = new Interface(this.html)
 
-        this.tables  = new Tables(this.cfg, this.html).get_all()
+        this.interface = new Interface()
+        this.buttons = await this.interface.run(this.html)
 
-        console.log(this.tables)
+        log("this.buttons: ", this.buttons, [this.CLASS_NAME, FU_NAME])
 
-        this.all_tables_sorted = [this.tables[0]["table_sorted"], this.tables[1]["temp"], this.tables[2]["items"]]
+        this.tables = new Tables(this.cfg, this.html)
+        this.tables = await this.tables.get_all()
+        this.all_tables_sorted = [this.tables[0], this.tables[1], this.tables[2]]
+        
+        log("All sorted tables: ", this.all_tables_sorted, [this.CLASS_NAME, FU_NAME])
 
         this.traffic  = this.all_tables_sorted[0]["traffic"]
         this.comment  = this.all_tables_sorted[0]["comment"]
         this.reasons  = this.all_tables_sorted[0]["reason"]
+        
+        log("this.traffic: ", this.all_tables_sorted[0]["traffic"], [this.CLASS_NAME, FU_NAME])
+        log("this.comment: ", this.all_tables_sorted[0]["comment"], [this.CLASS_NAME, FU_NAME])
+        log("this.reasons: ", this.all_tables_sorted[0]["reason"], [this.CLASS_NAME, FU_NAME])
 
-        this.datetime = new VpTime(this.all_tables_sorted[0]["datetime"].split(", "))
+        this.datetime = new VpTime()
+        this.datetime = await this.datetime.run(this.all_tables_sorted[0]["datetime"].split(", "))
+        
+        log("this.datetime: ", this.datetime, [this.CLASS_NAME, FU_NAME])
 
-        let analis_settings = {
+        this.analysis     = new AnalIs()
+        this.analis       = await this.analysis.run({
             tables:     this.all_tables_sorted, 
             all_list:   this.templates["all_list"],
             config:     this.cfg,
             html:       this.html,
-            scanr:      this.scanr,
             interface:  this.interface,
             templates:  this.templates,
+            datetime:   this.datetime,
             deny:       this.deny
-        }
+        })
 
-        console.log("----MAIN----")
+        log("this.analysis: ", this.analysis, [this.CLASS_NAME, FU_NAME])
+        log("this.analis: ",   this.analis,   [this.CLASS_NAME, FU_NAME])
 
-        analis_settings["datetime"] = this.datetime
-        this.analysis = new AnalIs(analis_settings)
-        this.uv_turn  = this.analysis.uv_turn 
-        this.type_of_page = this.analysis.type_of_page
+        this.uv_turn      = this.analysis.uv_turn 
+        this.type_of_page = this.analis[0]
 
-        this.copy_class = new CopyConnect({
+        log("this.uv_turn: ", this.uv_turn, [this.CLASS_NAME, FU_NAME])
+        log("this.type_of_page: ", this.type_of_page, [this.CLASS_NAME, FU_NAME])
+
+        this.copy_class = new CopyConnect()
+        await this.copy_class.run({
 
             html:              this.html,
             type_of_page:      this.type_of_page,
-            interface:         this.interface,
+            interface:         this.buttons,
             all_tables_sorted: this.all_tables_sorted[0]["table_sorted"],
 
             traffic:           this.traffic,
@@ -75,10 +100,10 @@ class App {
             templates:         this.templates
 
         })
+
+        log("this.copy_class: ", this.copy_class, [this.CLASS_NAME, FU_NAME])
     }
 }
 
 const TL_APP = new App({start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', 
     html: document.body, config: false})
-
-console.clear()
