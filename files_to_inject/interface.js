@@ -54,7 +54,7 @@ class Interface {
             "app_dop": ["Допродажа</br>Alt+W", {}],
             "app_dc": ["Дк</br>Alt+Q", {}],
             "app_cut": ["Убрать копейки", {}],
-            "app_telegram": ["Телеграм", {}],
+            "app_telegram": ["Новости", {}],
             "app_error": ["Отчет об ошибке", {}]
           }
 
