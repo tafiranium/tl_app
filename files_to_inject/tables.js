@@ -39,13 +39,9 @@ class Tables {
 
                 }
 
-                console.log(buffer[0])
-                console.log(buffer[1])
-
                 let result = document.createElement("div")
 
                 buffer.forEach((page) => {
-                    console.log(page)
                     page.forEach((e)=> {
                         result.appendChild(e)
                     })
