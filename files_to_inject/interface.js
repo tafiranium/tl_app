@@ -148,7 +148,7 @@ class Interface {
           })
 
           buttons_list["app_telegram"].addEventListener("mouseover", ()=> {
-            buttons_list["app_telegram"].style.background = "#01bde1"
+            buttons_list["app_telegram"].style.background = "#223033"
             buttons_list["app_telegram"].style.color = "white"
           })
 
