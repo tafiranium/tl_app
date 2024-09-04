@@ -65,7 +65,7 @@ class Interface {
               transition: "0.5s ease-in-out",
               background: start_color,
             }],
-            "app_telegram": ["Телеграм", {
+            "app_telegram": ["Новости", {
               transition: "0.1s ease-in-out",
               background: start_color,
             }],
