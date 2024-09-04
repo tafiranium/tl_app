@@ -79,6 +79,7 @@ class CopyConnect {
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
+        console.clear()
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
@@ -161,7 +162,7 @@ class CopyConnect {
 
     clipText(msg, hot=false) {
         if (this.checks(true)[0] == true) {
-
+            console.clear()
             navigator.clipboard.writeText(this.format_uv(msg))
                 .then(() => {console.log(`Успешно скопировано в буфер обмена! (Alt+S)`)})
                 .catch(err => {console.log("Ошибка", err)}); 
@@ -199,6 +200,7 @@ class CopyConnect {
 
     connect_click() {
         this.copyButton.addEventListener("click", (e) => {
+                console.clear()
                 this.copyButton.style.background = "rgb(238, 238, 238)"
                 this.clipText(this.vp, false)
     })}
