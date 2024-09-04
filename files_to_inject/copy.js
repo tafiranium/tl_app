@@ -1,8 +1,14 @@
-
-
 class CopyConnect {
 
-    constructor(args) {
+    constructor() {
+        this.CLASS_NAME = "CopyConnect"
+    }
+
+    async run(args) {
+
+        let FU_NAME = "run"
+
+        log("args: ", args, [this.CLASS_NAME, FU_NAME])
 
         this.traffic  = args["traffic"]
         this.comment  = args["comment"]
@@ -11,30 +17,38 @@ class CopyConnect {
         this.all_list = args["templates"]["all_list"]
         this.html     = args["html"]
 
-        this.all_tables_sorted   = args["tables"]
-        this.interface      =   args["interface"]
-        this.analis              = args["analis"]
+        this.all_tables_sorted  = args["tables"]
+        this.interface          = args["interface"]
+        this.analis             = args["analis"]
+
+        this.money = this.analis.money_object
 
         this.temp = args["templates"]
         this.cat = this.temp["icons"]
 
-        this.buttons        =   this.interface.buttons
+        log("this.temp: ", this.temp, [this.CLASS_NAME, FU_NAME])
+
+        this.buttons        =   this.interface
         this.copyButton     =   this.buttons[0]
         this.checksButtons  =   this.buttons[1]
         this.cat_button     =   this.buttons[2]
+
+        log("this.buttons: ", this.buttons, [this.CLASS_NAME, FU_NAME])
 
         this.deny = args["deny"]
         this.key_buffer     = []
         this.hot_keys()
         
-
         this.type = this.analis.type_of_page[0]
         this.vp   = this.analis.vp
+
+        log("this.type: ", this.type, [this.CLASS_NAME, FU_NAME])
+        log("this.vp: ", this.vp, [this.CLASS_NAME, FU_NAME])
 
         this.connect_click()
         let need = this.temp["need"]
         
-        console.log(!need["traffic"].includes(this.type))
+        // console.log(!need["traffic"].includes(this.type))
 
         this.need_traffic =  (!need["traffic"].includes(this.type)  &  this.deny.includes(this.traffic)) 
         this.need_comment =  (need["comment"].includes(this.type)   &  this.deny.includes(this.comment))
@@ -57,13 +71,14 @@ class CopyConnect {
             })
 
         } this.checks(false);
+
+        // console.log(this.vp)
     }
 
     format_uv(table) { return table.map((e) => ((e == -1) ? "" : e)).join("\t") }
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
-        console.clear()
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
@@ -81,7 +96,7 @@ class CopyConnect {
             let tra = template[i][3]
 
             if (che) {
-                console.log(i, tra. msg)
+                // console.log(i, tra. msg)
                 if (tra) { msg = msg[this.type] }
                 if (no_start) alert(msg); num = num.map((n) => {return this.html.querySelector(`.detail-view.table tr:nth-child(${n})`)});
                 num.map((x) => {[x.querySelector("th"), x.querySelector("td")].map((e) => {e.style.background="#C44536"; e.style.color="white"})})
@@ -114,6 +129,7 @@ class CopyConnect {
             
             
             let NoNe = ["", "-1", -1]
+            
             if ((this.vp[31] != -1) || (this.vp[32] != -1)) {
 
                 if (this.checked(this.checksButtons[0])) {
@@ -126,6 +142,16 @@ class CopyConnect {
                 } else if (!NoNe.includes(this.vp[32])) {
                         this.vp[31] = this.vp[32];  
                         this.vp[32] = -1;
+                }
+            }
+
+            if (this.checked(this.checksButtons[3])) {
+                for (let i in this.money) {
+                    this.vp[i] = this.money[i][1]
+                }
+            } else if (!this.checked(this.checksButtons[3])) {
+                for (let i in this.money) {
+                    this.vp[i] = this.money[i][0]
                 }
             }
         } else {return [false, this.vp]} return [true, this.vp];
