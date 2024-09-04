@@ -61,7 +61,7 @@ class Interface {
               transition: "0.5s ease-in-out",
               background: start_color,
             }],
-            "app_cut": ["Убрать копейки</br>Alt+Z", {
+            "app_cut": ["Убрать копейки", {
               transition: "0.5s ease-in-out",
               background: start_color,
             }],
