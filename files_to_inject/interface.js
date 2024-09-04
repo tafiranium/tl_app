@@ -3,6 +3,11 @@ class Interface {
     async run(html) {
       this.html = html
 
+        const text_color = "#616161"
+        const background_color = "#F0F0F0"
+        const border_color = "#e0e0e0"
+        const border_second_color = "#0088cc"
+
         const styles = {
               appwrapper: {
                 height: "auto",
@@ -10,8 +15,8 @@ class Interface {
                 position: "relative",
                 zIndex: "100",
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "3px"
+                gridTemplateColumns: "1fr 1fr"
+                // gap: "3px"
               },
             spans: {
               position: "relative",
@@ -21,12 +26,12 @@ class Interface {
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
-              color: "#383c39",
-              background: "rgb(238, 238, 238)",
-              border: "solid 0.5px #c5c5c5",
+              color: text_color,
+              background: background_color,
+              border: "solid 0.5px" + border_color,
               fontSize: "12px",
-              fontWeight: "bold",
-              fontFamily: "helvetica",
+              fontWeight: "100",
+              fontFamily: "Verdana, Roboto, 'Open Sans'",
               cursor: "pointer",
               userSelect: "none",
               textAlign: "center"
@@ -38,41 +43,19 @@ class Interface {
           wrapper.classList.add("wrapper")
           Object.assign(wrapper.style, styles["appwrapper"])
 
-          let start_color = "rgb(238, 238, 238)"
-
           const bst = {
             "app_icon": [`ฅ^•⩊•^ฅ`, {
               fontWeight: "100",
-              fontSize: "22px",
+              fontSize: "20px",
               transition: "transform 0.1s ease-in-out, color 0.2s ease-in-out"
             }],
-            "app_copy_button": ["Копировать</br>Alt+S",  {
-              transition: "0.1s ease-out"
-            }],
-            "app_sbp": ["Сбп</br>Alt+A", {
-              transition: "0.5s ease-in-out",
-              background: start_color,
-            }],
-            "app_dop": ["Допродажа</br>Alt+W", {
-              transition: "0.5s ease-in-out",
-              background: start_color,
-            }],
-            "app_dc": ["Дк</br>Alt+Q", {
-              transition: "0.5s ease-in-out",
-              background: start_color,
-            }],
-            "app_cut": ["Убрать копейки", {
-              transition: "0.5s ease-in-out",
-              background: start_color,
-            }],
-            "app_telegram": ["Новости", {
-              transition: "0.1s ease-in-out",
-              background: start_color,
-            }],
-            "app_error": ["Отчет об ошибке", {
-              transition: "0.1s ease-in-out",
-              background: start_color,
-            }]
+            "app_copy_button": ["Копировать</br>Alt+S",  {}],
+            "app_sbp": ["Сбп</br>Alt+A", {}],
+            "app_dop": ["Допродажа</br>Alt+W", {}],
+            "app_dc": ["Дк</br>Alt+Q", {}],
+            "app_cut": ["Убрать копейки", {}],
+            "app_telegram": ["Телеграм", {}],
+            "app_error": ["Отчет об ошибке", {}]
           }
 
           let buttons_list = {}
@@ -96,8 +79,18 @@ class Interface {
             buttons_list["app_cut"], buttons_list["app_telegram"]
           ]  
           
-          mass.forEach((e) => {e.addEventListener("click", () => {this.ToggleCheck(e)})});
-          buttons_list["app_copy_button"].addEventListener("mousedown", (e) => {e.target.style.background = "#a1c8e7"})
+          mass.forEach((e) => {e.addEventListener("click", () => {
+            this.ToggleCheck(e, [border_color, border_second_color])
+            if (!this.check(e)) e.style.borderLeft = "solid 3px " + border_second_color
+          })});
+          
+          [["mouseover", border_second_color, border_second_color],
+           ["mouseout",  border_color,        text_color]].forEach(el => {
+            mass.forEach((e) => {e.addEventListener(el[0], () => {
+              if (!this.check(e)) e.style.borderLeft = "solid 3px " + el[1]
+              e.style.color = el[2]
+            })});
+          })
           
           all.forEach(e => {wrapper.appendChild(e)});
           this.html.querySelector(".main-container .sidebar").appendChild(wrapper)
@@ -115,15 +108,14 @@ class Interface {
           })
 
           buttons_list["app_error"].addEventListener("mouseover", ()=> {
-            buttons_list["app_error"].style.background = "#edabab"
+            buttons_list["app_error"].style.color = border_second_color
           })
 
           buttons_list["app_error"].addEventListener("mouseout", ()=> {
-            buttons_list["app_error"].style.background = start_color
+            buttons_list["app_error"].style.color = text_color
           })
 
           buttons_list["app_error"].addEventListener("click", ()=> {
-            buttons_list["app_error"].style.background = start_color
             let result = confirm("Нашли ошибку? Составим отчет об ошибке?");
             if (result) {
               let problem = prompt("Опишите проблему");
@@ -139,23 +131,9 @@ class Interface {
             window.open('https://t.me/+WBv4WSieLmwwMjZi');
           })
           
-          buttons_list["app_copy_button"].addEventListener("mouseover", ()=> {
-            buttons_list["app_copy_button"].style.background = "#bbe5e7"
-          })
-
-          buttons_list["app_copy_button"].addEventListener("mouseout", ()=> {
-            buttons_list["app_copy_button"].style.background = start_color
-          })
-
-          buttons_list["app_telegram"].addEventListener("mouseover", ()=> {
-            buttons_list["app_telegram"].style.background = "#9da2a3"
-            buttons_list["app_telegram"].style.color = "white"
-          })
-
-          buttons_list["app_telegram"].addEventListener("mouseout", ()=> {
-            buttons_list["app_telegram"].style.background = start_color
-            buttons_list["app_telegram"].style.color = "#383c39"
-          })
+          let second_mass = ["app_copy_button", "app_telegram", "app_error"].map(i => {return buttons_list[i]})
+          let move = [["mouseover", border_second_color], ["mouseout",  text_color]]
+          move.forEach(el => {second_mass.forEach((e) => {e.addEventListener(el[0], () => {e.style.color = el[1]})});})
 
           return [
             buttons_list["app_copy_button"], 
@@ -164,11 +142,11 @@ class Interface {
           ]
     }
 
-    ToggleCheck(el, cls="checked") {
+    ToggleCheck(el, colors, cls="checked") {
         console.clear()
-        let colors = ["rgb(238, 238, 238)", "#bdbdbd"]
         el.classList.toggle(cls)
-        if (this.check(el)) {el.style.background = colors[1]} else {el.style.background = colors[0]}
+        if (this.check(el)) {el.style.borderLeft = "solid 4px" + colors[1]} 
+        else {el.style.borderLeft = "solid 4px" + colors[0]}
     }
 
     check(el, cls="checked") {return (el.classList.contains(cls))}
