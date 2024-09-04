@@ -25,11 +25,16 @@ class Tables {
                 let buffer = []
 
                 for (let i = this.count_of_pages; i >= 1; i--) {
-
-                    let url = `https://tl.myvirtualpos.ru/console/sales/view/ajax/receipt-items/id/2049545/page/${i}`
+                    
+                    let bill_id = window.location.href.split("/")
+                    bill_id = bill_id[bill_id.length - 1]
+                    let url = `https://tl.myvirtualpos.ru/console/sales/view/ajax/receipt-items/id/${bill_id}/page/${i}`
+                    
                     let page = await get_page(url)
+                    
                     let temp = document.createElement("div")
                     temp.innerHTML = page
+                    
                     buffer.push(temp.querySelectorAll(this.sel[name]));
 
                 }
