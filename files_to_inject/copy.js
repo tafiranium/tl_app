@@ -22,7 +22,6 @@ class CopyConnect {
         this.analis            = args["analis"]
 
         this.money = this.analis.money_object
-        console.log(this.analis)
         this.return_obj = this.analis.copy_massive
 
         this.temp = args["templates"]
@@ -43,6 +42,7 @@ class CopyConnect {
         
         this.type = this.analis.type_of_page[0]
         this.vp   = this.analis.vp
+        let bill_url = this.analis.type_of_page_object.vars["return_link"]
 
         log("this.type: ", this.type, [this.CLASS_NAME, FU_NAME])
         log("this.vp: ", this.vp, [this.CLASS_NAME, FU_NAME])
@@ -57,7 +57,6 @@ class CopyConnect {
 
         if (this.return_obj[0] != false) {
             let vars = this.return_obj[0].vars
-            let return_link = vars["return_link"]
             let traffic = vars["traffic"]
             let comment = vars["comment"]
             let reasons = vars["reasons"]
@@ -71,7 +70,7 @@ class CopyConnect {
 
             if (this.need_returns) {
                 let result = confirm("Исходный чек не корректен!\nПерейти к проблемному чеку?");
-                if (result) {window.location.replace(window.location.host + return_link)} 
+                if (result) {window.location.replace(bill_url)} 
             }
         }
 
