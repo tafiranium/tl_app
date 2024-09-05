@@ -121,7 +121,9 @@ class Interface {
               let problem = prompt("Опишите проблему");
               result = confirm("Отправить отчет?");
               if (result != false) {
-                sendMessage(`${problem}\n${window.location.href}`)
+                let shop = document.querySelector(".detail-view.table tr:nth-child(1) td").innerText
+                let seller = document.querySelector(".user-info").innerText.replace('"', '').trim()
+                sendMessage(`Магазин: ${shop}\nПродавец: ${seller}\nПроблема: ${problem}\nСсылка: ${window.location.href}`)
                 alert("Спасибо за уделенное время! Приятного использования!");
               } 
             }
