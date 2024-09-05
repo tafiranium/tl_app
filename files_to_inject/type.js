@@ -8,9 +8,12 @@ class Type {
         this.cluv       = {}
         this.back       = back
 
-        this.vars = {traffic: 19, reasons: 20, comment: 21, shop: 1, return_link: 17}
-        for (let v in this.vars) {this.vars[v] = this.html
-            .querySelector(`#detail-view tr:nth-child(${this.vars[v]}) td`).innerText.trim()}
+        this.vars = {traffic: [19, true], reasons: [20, true], comment: [21, true], shop: [1, true], return_link: [17, false]}
+        for (let v in this.vars) {
+            let temp = this.vars[v]
+            this.vars[v] = this.html.querySelector(`#detail-view tr:nth-child(${(temp[1])?`${temp[0]}) td`:`${temp[0]}) td a`}`)
+            this.vars[v] = (temp[1]) ? this.vars[v].innerText.trim(): (this.vars[v] == null) ? false: this.vars[v].getAttribute("href")
+        }
 
         this.type = this.get_type()
     }
@@ -22,7 +25,6 @@ class Type {
         
         if (item_table_size == 1) {
             let item_name = item_table[0].querySelector("td:nth-child(2)").innerText
-            console.log((item_name === name), item_name, name)
             return (item_name === name)
         } return false
         
