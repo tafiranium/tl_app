@@ -72,14 +72,12 @@ class CopyConnect {
 
         } this.checks(false);
 
-        // console.log(this.vp)
     }
 
     format_uv(table) { return table.map((e) => ((e == -1) ? "" : e)).join("\t") }
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
-        console.log(this.money)
 
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
