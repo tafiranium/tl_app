@@ -21,4 +21,3 @@ async function get_page(url) {
       .catch(error => console.error('Error fetching data:', error));
 }
 
-
