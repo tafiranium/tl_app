@@ -17,21 +17,23 @@ class CopyConnect {
         this.all_list = args["templates"]["all_list"]
         this.html     = args["html"]
 
-        this.all_tables_sorted  = args["tables"]
-        this.interface          = args["interface"]
-        this.analis             = args["analis"]
+        this.all_tables_sorted = args["tables"]
+        this.interface         = args["interface"]
+        this.analis            = args["analis"]
 
         this.money = this.analis.money_object
+        console.log(this.analis)
+        this.return_obj = this.analis.copy_massive
 
         this.temp = args["templates"]
         this.cat = this.temp["icons"]
 
         log("this.temp: ", this.temp, [this.CLASS_NAME, FU_NAME])
 
-        this.buttons        =   this.interface
-        this.copyButton     =   this.buttons[0]
-        this.checksButtons  =   this.buttons[1]
-        this.cat_button     =   this.buttons[2]
+        this.buttons       = this.interface
+        this.copyButton    = this.buttons[0]
+        this.checksButtons = this.buttons[1]
+        this.cat_button    = this.buttons[2]
 
         log("this.buttons: ", this.buttons, [this.CLASS_NAME, FU_NAME])
 
@@ -47,14 +49,33 @@ class CopyConnect {
 
         this.connect_click()
         let need = this.temp["need"]
-        
-        // console.log(!need["traffic"].includes(this.type))
 
         this.need_traffic =  (!need["traffic"].includes(this.type)  &  this.deny.includes(this.traffic)) 
         this.need_comment =  (need["comment"].includes(this.type)   &  this.deny.includes(this.comment))
-        this.need_reasons  = (need["reasons"].includes(this.type)   &  this.deny.includes(this.reasons)) 
-        
-        this.not_allow = (this.need_reasons || this.need_comment || this.need_traffic)
+        this.need_reasons =  (need["reasons"].includes(this.type)   &  this.deny.includes(this.reasons)) 
+        this.need_returns = false
+
+        if (this.return_obj[0] != false) {
+            let vars = this.return_obj[0].vars
+            let return_link = vars["return_link"]
+            let traffic = vars["traffic"]
+            let comment = vars["comment"]
+            let reasons = vars["reasons"]
+            let type = this.return_obj[0].type[0]
+
+            let need_traffic =  (!need["traffic"].includes(type)  &  this.deny.includes(traffic)) 
+            let need_comment =  (need["comment"].includes(type)   &  this.deny.includes(comment))
+            let need_reasons =  (need["reasons"].includes(type)   &  this.deny.includes(reasons)) 
+
+            this.need_returns = (need_reasons || need_comment || need_traffic)
+
+            if (this.need_returns) {
+                let result = confirm("Исходный чек не корректен!\nПерейти к проблемному чеку?");
+                if (result) {window.location.replace(window.location.host + return_link)} 
+            }
+        }
+
+        this.not_allow = (this.need_reasons || this.need_comment || this.need_traffic || this.need_returns)
 
         if (this.not_allow) {this.cat_button.innerHTML = this.cat[1]} else {
 
@@ -79,9 +100,8 @@ class CopyConnect {
 
     checks(no_start = true) {
 
-        console.clear()
-        
         let template = {
+            "returns": ["У вас проблемный чек!", [17], this.need_returns, false],
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
                          market: "Введите комментарий с номером заказа!", 
@@ -141,10 +161,16 @@ class CopyConnect {
                     }
                 })
             }
-
+            
+           
             let check_cut = this.checked(this.checksButtons[3])
-            let check_cut_number = (check_cut == true) ? 1:0
-            for (let i in this.money) {this.vp[i] = this.money[i][check_cut_number]}
+            let check_cut_number    = (check_cut == true) ? 1:0
+
+            if (this.return_obj[0] != false) {
+                if      (this.return_obj[0].type[0] == "mobile") {for (let i in this.money) {let it = this.money[i][check_cut_number]; this.vp[i] = (it == "-1") ? "":"-" + it}} 
+                else if (this.return_obj[0].type[0] == "buyer") {for (let i in this.money) {this.vp[i] = this.money[i][check_cut_number]}}
+                else if (this.return_obj[0].type[0] == "market") {for (let i in this.money) {this.vp[i] = "-1"}}
+            } else { for (let i in this.money) {this.vp[i] = this.money[i][check_cut_number]} }
 
         } else {return [false, this.vp]} return [true, this.vp];
     } 
@@ -152,7 +178,6 @@ class CopyConnect {
     key(k) {return(this.key_buffer.includes(k))}
 
     clipText(msg, hot=false) {
-        console.clear()
         if (this.checks(true)[0] == true) {
 
             navigator.clipboard.writeText(this.format_uv(msg))
@@ -191,7 +216,6 @@ class CopyConnect {
     } 
 
     connect_click() {
-        console.clear()
         this.copyButton.addEventListener("click", (e) => {
                 this.copyButton.style.background = "rgb(238, 238, 238)"
                 this.clipText(this.vp, false)
