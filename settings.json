@@ -1,5 +1,12 @@
 {
   "files": [
-
+    "variables",
+    "interface",
+    "time", 
+    "type",
+    "copy", 
+    "tables", 
+    "anal", 
+    "app"
     ]
 }
