@@ -222,8 +222,8 @@ class AnalIs {
             this.vp[37] = cash_nocash[0][0]
             this.vp[38] = cash_nocash[1][0]
             this.money_object = {
-                33: cnc[1][0],
-                34: cnc[1][1]
+                37: cnc[1][0],
+                38: cnc[1][1]
             }
         }
     }
