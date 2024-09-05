@@ -79,7 +79,8 @@ class CopyConnect {
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
-        console.clear()
+        console.log(this.money)
+
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
@@ -97,7 +98,6 @@ class CopyConnect {
             let tra = template[i][3]
 
             if (che) {
-                // console.log(i, tra. msg)
                 if (tra) { msg = msg[this.type] }
                 if (no_start) alert(msg); num = num.map((n) => {return this.html.querySelector(`.detail-view.table tr:nth-child(${n})`)});
                 num.map((x) => {[x.querySelector("th"), x.querySelector("td")].map((e) => {e.style.background="#C44536"; e.style.color="white"})})
@@ -127,34 +127,25 @@ class CopyConnect {
                     };
                 }
             }
-            
-            
-            let NoNe = ["", "-1", -1]
-            
-            if ((this.vp[31] != -1) || (this.vp[32] != -1)) {
 
-                if (this.checked(this.checksButtons[0])) {
+            if (Object.keys(this.money).length == 3) {
 
-                    if (!NoNe.includes(this.vp[31])) {
-                        this.vp[32] = this.vp[31]; 
-                        this.vp[31] = -1;
+                let num_object = {31: false, 32: true}
+                let num = Object.keys(num_object)
+
+                num.map(e => {
+                    if (this.money[e][0] == "-1" & this.checked(this.checksButtons[0]) == num_object[e]) {
+                        let another = num[(e == num[0]) ? 1:0]
+                        this.money[e] = this.money[another]
+                        this.money[another] = ["-1", "-1"]
                     }
-
-                } else if (!NoNe.includes(this.vp[32])) {
-                        this.vp[31] = this.vp[32];  
-                        this.vp[32] = -1;
-                }
+                })
             }
 
-            if (this.checked(this.checksButtons[3])) {
-                for (let i in this.money) {
-                    this.vp[i] = this.money[i][1]
-                }
-            } else if (!this.checked(this.checksButtons[3])) {
-                for (let i in this.money) {
-                    this.vp[i] = this.money[i][0]
-                }
-            }
+            let check_cut = this.checked(this.checksButtons[3])
+            let check_cut_number = (check_cut == true) ? 1:0
+            for (let i in this.money) {this.vp[i] = this.money[i][check_cut_number]}
+
         } else {return [false, this.vp]} return [true, this.vp];
     } 
 
@@ -162,7 +153,7 @@ class CopyConnect {
 
     clipText(msg, hot=false) {
         if (this.checks(true)[0] == true) {
-            console.clear()
+
             navigator.clipboard.writeText(this.format_uv(msg))
                 .then(() => {console.log(`Успешно скопировано в буфер обмена! (Alt+S)`)})
                 .catch(err => {console.log("Ошибка", err)}); 
@@ -200,9 +191,7 @@ class CopyConnect {
 
     connect_click() {
         this.copyButton.addEventListener("click", (e) => {
-                console.clear()
                 this.copyButton.style.background = "rgb(238, 238, 238)"
                 this.clipText(this.vp, false)
     })}
 }    
-console.clear()
