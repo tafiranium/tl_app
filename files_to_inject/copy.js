@@ -79,6 +79,8 @@ class CopyConnect {
 
     checks(no_start = true) {
 
+        console.clear()
+        
         let template = {
             "traffic": ["Введите трафик!", [19], this.need_traffic, false],
             "comment": [{return: "Введите комментарий, опишите причину возврата чека!", 
@@ -150,6 +152,7 @@ class CopyConnect {
     key(k) {return(this.key_buffer.includes(k))}
 
     clipText(msg, hot=false) {
+        console.clear()
         if (this.checks(true)[0] == true) {
 
             navigator.clipboard.writeText(this.format_uv(msg))
@@ -188,6 +191,7 @@ class CopyConnect {
     } 
 
     connect_click() {
+        console.clear()
         this.copyButton.addEventListener("click", (e) => {
                 this.copyButton.style.background = "rgb(238, 238, 238)"
                 this.clipText(this.vp, false)
