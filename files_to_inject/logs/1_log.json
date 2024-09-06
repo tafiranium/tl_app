@@ -1,0 +1,90 @@
+{
+    "size": 40,
+
+    "order_types": ["market", "shop", "takeup"],
+    "no_buyer" : ["empty", "open", "no_item", "return"],
+    "default": [{"shift": true, "date": true, "time": true, "name": true}, 
+        {"shift": 0,   "date": 1,   "time": 2,  "name": 39}, [4, 1, 5, 3]],
+
+    "shift":     0,
+    "date" :     1,
+    "time" :     2,
+    "enter":     3,
+    "no_client": 4,
+
+    "traffic": {
+
+        "return" : [[["default"],  [0, 0, -1, -1],   [0],    [0, 1, 1, 1, 1],     [0, 0, 1]], [3, [0, "return", "cssDisplayNone"]]],
+        "no_item": [[["default"],  [1, 1, -1, -1],   [-1],   [0, 1, -1, -1, 1],   [false] ],  [2, "Нетовар"]],
+        "open"   : [[["default"],  [false],          [false],[false],             [false]],   [2, "открытие смены"]],
+        "empty"  : [["default"],   [false],          [0],    [false],             [false]],
+
+        "buyer"  : [[["default"],   [ 1, 1, 1, -1],   [-1],  [1, 1, 1, 1, 1],      [1, -1, -1]  ], [1, false], {
+            "":                  -1,
+            "Не задан":          -1, 
+            "Сайт":               5, 
+            "Вывеска-пеш":        6, 
+            "Вывески-очень":      6,
+            "Вывеска-авто":       7, 
+            "Постоянный":         8, 
+            "Соседи":            10, 
+            "СМИ":               11, 
+            "Партнеры":           9, 
+            "Яндекс":            13, 
+            "Гугл":              12, 
+            "2ГИЗ":              14, 
+            "По рекомендации":   15, 
+            "Прочее":            16
+        }],
+
+        "market" : [[["default"],  [0, -1, -1, -1],  [1],   [0, -1, 1, -1, 1],    [false]], [1, false], {
+          "Яндекс Маркет": 24, 
+          "Яндекс Еда (Деливери)": 24, 
+          "ОЗОН": 25, 
+          "Сбер": 24
+        }],
+      
+        "mobile" : [[["default"],   [0, 0, -1, -1],   [1],   [0, -1, 1, 1, 1],     [-1, 1, -1]], [1, false], {
+            "Приложение": 22, "Сайт Страсть": 22
+        }],
+
+        "takeup" : [[["default"],   [0, 0, -1, -1],   [1],   [0, 1, 1, 1, 1],      [-1, 1, -1]], [1, false], {
+            "Самовывоз" : 23
+        }]
+    },
+
+    "disc": {
+        "dc":       17,
+        "bp":       18,
+        "sixsix":   19,
+        "book":     20
+    },
+
+    "order":        21,
+    "orders": {
+        "mobile"  : 22,
+        "takeup"  : 22,
+        "ymarket" : 23,
+        "ozon"    : 24
+    },
+
+    "comment"     :   26,
+    "buy"         :   27,
+    "item_count"  :   28,
+    "articles"    :   29,
+
+    "cash"        :   30,
+    "nocash"      :   31,
+    "sbp"         :   32,
+
+    "order_cash"    : 33,
+    "order_nocash"  : 34,
+
+    "contact"       : 35,
+    "takeup_num"    : 36,
+
+    "return_cash"   : 37,
+    "return_nocash" : 38,
+
+    "seller"        : 39 
+}
