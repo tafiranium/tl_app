@@ -91,7 +91,7 @@
     "takeup" : [[["default"],   [0, 0, -1, -1],   [1],   [0, 1, 1, 1, 1],      [-1, 1, -1]], [1, false], {"Самовывоз" : 23}]
     },
   "order": ["market", "shop", "takeup"],
-  "no_buyer" : ["empty", "open", "no_item", "return"],
+  "no_buyer" : ["empty", "open", "client_order", "no_item", "return"],
   "enter": ["","Не задан", "Сайт", "Вывеска-пеш", "Вывески-очень", "Вывеска-авто", "Постоянный", "Соседи", "СМИ", "Партнеры", "Яндекс", "Гугл", "2ГИЗ", "По рекомендации", "Прочее", "Самовывоз"],
   "default": [{"shift": true, "date": true, "time": true, "name": true}, {"shift": 0,   "date": 1,   "time": 2,  "name": 39}, [4, 1, 5, 3]]
 }
