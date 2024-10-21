@@ -1,9 +1,11 @@
+let sets = {start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', config: false}
+
 class App {
 
     constructor(args) {
         this.CLASS_NAME = "App"
         this.config = args["config"] 
-        this.html = args["html"]
+        this.html = document.body
         this.start_key = args["start_key"]
         this.main()
     }
@@ -22,7 +24,26 @@ class App {
 
     t(type_of_page) {return this.cfg["type_settings"][type_of_page][2]}
 
+    async get_html() {
+
+        let html = document.body
+    
+        if (window.location.href.includes("cpanel")) {
+            let href = "" + window.location
+            href = href.replace("/cpanel/console?path=", "")
+            html = await get_page(href)
+            let temp = document.createElement("div")
+            temp.innerHTML += html
+            html = temp
+        }
+    
+        return html
+    }
+    
+
     async main() {
+
+        this.html = await this.get_html()
 
         let FU_NAME = "main"
         log("async function", `${FU_NAME}()`, [this.CLASS_NAME, FU_NAME])
@@ -45,7 +66,10 @@ class App {
 
         this.tables = new Tables(this.cfg, this.html)
         this.tables = await this.tables.get_all()
+
         this.all_tables_sorted = [this.tables[0], this.tables[1], this.tables[2]]
+
+        console.log(this.all_tables_sorted)
         
         log("All sorted tables: ", this.all_tables_sorted, [this.CLASS_NAME, FU_NAME])
 
@@ -105,5 +129,12 @@ class App {
     }
 }
 
-const TL_APP = new App({start_key: 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RhZmlyYW5pdW0vdGxfYXBwL21haW4v', 
-    html: document.body, config: false})
+let application = false 
+
+function reinstallClass() {
+    application = new App(sets)
+}
+
+application = new App(sets)
+
+
