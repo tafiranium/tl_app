@@ -2,6 +2,7 @@ class CopyConnect {
 
     constructor() {
         this.CLASS_NAME = "CopyConnect"
+        this.location = window.location.href
     }
 
     async run(args) {
@@ -82,12 +83,12 @@ class CopyConnect {
 
             this.cat_button.addEventListener("mouseover", () => {
                 this.cat_button.innerHTML       =  this.cat[0][1]; 
-                this.cat_button.style.fontSize  = "13px"; 
+                this.cat_button.style.fontSize  = "1cqh"; 
             })
 
             this.cat_button.addEventListener("mouseout", () => {
                 this.cat_button.innerHTML       =  this.cat[0][0]; 
-                this.cat_button.style.fontSize  = "22px";
+                this.cat_button.style.fontSize  = "2cqh";
             })
 
         } this.checks(false);
@@ -98,6 +99,12 @@ class CopyConnect {
     checked(btn) {return btn.classList.contains("checked")}
 
     checks(no_start = true) {
+
+        // console.log(this.location, window.location.href)
+
+        if (this.location != window.location.href) {
+            reinstallClass()
+        }
 
         let template = {
             "returns": ["У вас проблемный чек!", [17], this.need_returns, false],
@@ -216,7 +223,7 @@ class CopyConnect {
 
     connect_click() {
         this.copyButton.addEventListener("click", (e) => {
-                this.copyButton.style.background = "rgb(238, 238, 238)"
+                this.copyButton.style.background = "white"
                 this.clipText(this.vp, false)
     })}
 }    
