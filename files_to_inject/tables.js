@@ -1,9 +1,10 @@
 
 class Tables {
-    constructor(settings) {
+    constructor(settings, html) {
 
         this.cfg   =   settings
         this.sel   =   this.cfg["selectors"]["tables"]
+        this.html  =   html
 
         this.count_of_items_on_one_page = 10
 
@@ -13,12 +14,15 @@ class Tables {
     }
 
     async set_table(name, findall=false) { 
-
+        
         if (findall) {
 
-            let count = await this.set_table("coun")
-            this.count_of_items = count.innerHTML.trim().split(" ")[3].replace(".", '') 
-            this.count_of_pages = Math.ceil(this.count_of_items / this.count_of_items_on_one_page)
+            try {
+                let count = await this.set_table("coun")
+                this.count_of_items = count.innerHTML.trim().split(" ")[3].replace(".", '') 
+                this.count_of_pages = Math.ceil(this.count_of_items / this.count_of_items_on_one_page)
+            } catch { this.count_of_pages = 1 }
+            
 
             if (this.count_of_pages > 1) {
                 
@@ -46,9 +50,9 @@ class Tables {
 
                 return result.querySelectorAll("div > *")
                 
-            } else {return document.querySelectorAll(this.sel[name])}
+            } else {return this.html.querySelectorAll(this.sel[name])}
         } 
-        else {return document.querySelector(this.sel[name])}
+        else {return this.html.querySelector(this.sel[name])}
     }
 
     async get_all() {
@@ -57,6 +61,8 @@ class Tables {
         this.money  =  this.set_table("mone")
         this.sales  =  this.set_table("sale")
         this.items  =  this.set_table("item", true)
+
+        // console.log(this.mbase, this.money, this.sales, this.items)
 
         let b  = new  Base(this.mbase, this.cfg)
         let m  = new Money(this.money, this.cfg)
