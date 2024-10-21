@@ -4,24 +4,26 @@ class Interface {
       this.html = html
 
         const text_color = "#616161"
-        const background_color = "#F0F0F0"
+        const background_color = "white"
         const border_color = "#e0e0e0"
         const border_second_color = "#0088cc"
 
         const styles = {
-              appwrapper: {
-                height: "auto",
-                width: "auto",
-                position: "relative",
+            appwrapper: {
+                height: "8vh",
+                width: "50%",
+                right: "0",
+                bottom: "3vh",
+                position: "fixed",
+                marginRight: "4vh",
                 zIndex: "100",
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr"
-                // gap: "3px"
+                display: "flex",
+                gridTemplateColumns: "repeat(8, 20vh)"
               },
             spans: {
               position: "relative",
-              height: "60px",
-              width: "auto",
+              height: "100%",
+              width: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -29,7 +31,9 @@ class Interface {
               color: text_color,
               background: background_color,
               border: "solid 0.5px" + border_color,
-              fontSize: "12px",
+              paddingInline: "1vh",
+              fontSize: "1.5cqh",
+              lineHeight: "2cqh",
               fontWeight: "100",
               fontFamily: "Verdana, Roboto, 'Open Sans'",
               cursor: "pointer",
@@ -37,8 +41,7 @@ class Interface {
               textAlign: "center"
             }
           }
-          
-          this.html.querySelector(".sidebar-collapse").style.marginBottom = "0"; 
+
           let wrapper = document.createElement("div")
           wrapper.classList.add("wrapper")
           Object.assign(wrapper.style, styles["appwrapper"])
@@ -46,7 +49,7 @@ class Interface {
           const bst = {
             "app_icon": [`ฅ^•⩊•^ฅ`, {
               fontWeight: "100",
-              fontSize: "20px",
+              fontSize: "13px",
               transition: "transform 0.1s ease-in-out, color 0.2s ease-in-out"
             }],
             "app_copy_button": ["Копировать</br>Alt+S",  {}],
@@ -73,39 +76,32 @@ class Interface {
 
           let mass = [buttons_list["app_dc"], buttons_list["app_sbp"], buttons_list["app_dop"], buttons_list["app_cut"]]
           let all = [
-            buttons_list["app_dop"], buttons_list["app_icon"], 
-            buttons_list["app_sbp"], buttons_list["app_copy_button"], 
-            buttons_list["app_dc"],  buttons_list["app_error"], 
-            buttons_list["app_cut"], buttons_list["app_telegram"]
+             buttons_list["app_icon"],  buttons_list["app_copy_button"], buttons_list["app_dop"], 
+             buttons_list["app_sbp"],   buttons_list["app_dc"],          buttons_list["app_cut"],  
+             buttons_list["app_error"], buttons_list["app_telegram"]
           ]  
+
+          all[0].style.borderTopLeftRadius                = "20px"
+          all[all.length-1].style.borderTopRightRadius    = "20px"
+          all[0].style.borderBottomLeftRadius             = "20px"
+          all[all.length-1].style.borderBottomRightRadius = "20px"
           
           mass.forEach((e) => {e.addEventListener("click", () => {
             this.ToggleCheck(e, [border_color, border_second_color])
-            if (!this.check(e)) e.style.borderLeft = "solid 3px " + border_second_color
+            if (!this.check(e)) e.style.borderBottom = "solid 3px " + border_second_color
           })});
           
           [["mouseover", border_second_color, border_second_color],
            ["mouseout",  border_color,        text_color]].forEach(el => {
             mass.forEach((e) => {e.addEventListener(el[0], () => {
-              if (!this.check(e)) e.style.borderLeft = "solid 3px " + el[1]
+              if (!this.check(e)) e.style.borderBottom = "solid 3px " + el[1]
               e.style.color = el[2]
             })});
           })
           
           all.forEach(e => {wrapper.appendChild(e)});
-          this.html.querySelector(".main-container .sidebar").appendChild(wrapper)
 
-          let min_icon = document.querySelector(".sidebar#sidebar")
-          wrapper.style.display =  min_icon.classList.contains("menu-min")?"none":"grid"
-
-          min_icon.addEventListener("click", (e) => {
-            wrapper.style.display =  min_icon.classList.contains("menu-min")?"none":"grid"
-          })
-
-          let min_icon_arrow = document.querySelector(".sidebar#sidebar i")
-          min_icon_arrow.addEventListener("click", (e) => {
-            wrapper.style.display =  min_icon.classList.contains("menu-min")?"none":"grid"
-          })
+          document.body.appendChild(wrapper)
 
           buttons_list["app_error"].addEventListener("mouseover", ()=> {
             buttons_list["app_error"].style.color = border_second_color
@@ -147,8 +143,8 @@ class Interface {
     ToggleCheck(el, colors, cls="checked") {
         console.clear()
         el.classList.toggle(cls)
-        if (this.check(el)) {el.style.borderLeft = "solid 4px" + colors[1]} 
-        else {el.style.borderLeft = "solid 4px" + colors[0]}
+        if (this.check(el)) {el.style.borderBottom = "solid 4px" + colors[1]} 
+        else {el.style.borderBottom = "solid 4px" + colors[0]}
     }
 
     check(el, cls="checked") {return (el.classList.contains(cls))}
