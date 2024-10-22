@@ -22,7 +22,7 @@ class Interface {
             spans: {
               position: "relative",
               height: "100%",
-              width: "5vw",
+              width: "7vw",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
