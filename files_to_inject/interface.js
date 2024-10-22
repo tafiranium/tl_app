@@ -5,17 +5,16 @@ class Interface {
 
         const text_color = "#616161"
         const background_color = "white"
-        const border_color = "#e0e0e0"
+        const border_color = "#b3b1b1"
         const border_second_color = "#0088cc"
 
         const styles = {
             appwrapper: {
                 height: "8vh",
-                width: "50%",
+                width: "auto",
                 right: "0",
                 bottom: "3vh",
                 position: "fixed",
-                marginRight: "4vh",
                 zIndex: "100",
                 display: "flex",
                 gridTemplateColumns: "repeat(8, 20vh)"
@@ -23,14 +22,14 @@ class Interface {
             spans: {
               position: "relative",
               height: "100%",
-              width: "100%",
+              width: "5vw",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
               color: text_color,
               background: background_color,
-              border: "solid 0.5px" + border_color,
+              border: "solid 1px" + border_color,
               paddingInline: "1vh",
               fontSize: "1.5cqh",
               lineHeight: "2cqh",
@@ -81,10 +80,28 @@ class Interface {
              buttons_list["app_error"], buttons_list["app_telegram"]
           ]  
 
-          all[0].style.borderTopLeftRadius                = "20px"
-          all[all.length-1].style.borderTopRightRadius    = "20px"
-          all[0].style.borderBottomLeftRadius             = "20px"
-          all[all.length-1].style.borderBottomRightRadius = "20px"
+          let disp_el = [
+            buttons_list["app_copy_button"], buttons_list["app_dop"], 
+            buttons_list["app_sbp"],   buttons_list["app_dc"],          buttons_list["app_cut"],  
+            buttons_list["app_error"], buttons_list["app_telegram"]
+         ]  
+
+
+          buttons_list["app_icon"].classList.add("open")
+
+          function toggle_elements(is) {
+            if (is) {disp_el.forEach((el) => {el.style.display = "flex"})} 
+            else {disp_el.forEach((el) => {el.style.display = "none"})}
+          }
+
+          buttons_list["app_icon"].addEventListener("click", () => {
+            buttons_list["app_icon"].classList.toggle("open")
+            toggle_elements(buttons_list["app_icon"].classList.contains("open"))
+          })
+
+
+          all[0].style.borderTopLeftRadius    = "20px"
+          all[0].style.borderBottomLeftRadius = "20px"
           
           mass.forEach((e) => {e.addEventListener("click", () => {
             this.ToggleCheck(e, [border_color, border_second_color])
