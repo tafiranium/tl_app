@@ -119,6 +119,7 @@ class Interface {
           all.forEach(e => {wrapper.appendChild(e)});
 
           document.body.appendChild(wrapper)
+          this.wrapper = wrapper
 
           buttons_list["app_error"].addEventListener("mouseover", ()=> {
             buttons_list["app_error"].style.color = border_second_color
@@ -156,6 +157,8 @@ class Interface {
             buttons_list["app_icon"]
           ]
     }
+
+    remove() {this.wrapper.remove()}
 
     ToggleCheck(el, colors, cls="checked") {
         console.clear()
