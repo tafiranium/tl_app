@@ -12,14 +12,11 @@ class App {
 
     async get_file(salt, type=true) {
 
-        let FU_NAME = "get_file"
-        log("async function", `${FU_NAME}(${salt}, ${type})`, [this.CLASS_NAME, FU_NAME])
-
         let response  = await fetch(window.atob(this.start_key) + salt);
         if (response.ok) {
             if (type) {return await response.json()} 
             else {return await response.text()}
-        } else {console.log("Ошибка HTTP: " + response.status)}
+        } else {console.debug("Ошибка HTTP: " + response.status)}
     }
 
     t(type_of_page) {return this.cfg["type_settings"][type_of_page][2]}
@@ -27,16 +24,30 @@ class App {
     async get_html() {
 
         let html = document.body
-    
-        if (window.location.href.includes("cpanel")) {
-            let href = "" + window.location
-            href = href.replace("/cpanel/console?path=", "")
-            html = await get_page(href)
-            let temp = document.createElement("div")
-            temp.innerHTML += html
-            html = temp
+
+        async function waitForIframeAndElement(selector) {
+            return new Promise((resolve, reject) => {
+                const checkIframe = setInterval(() => {
+                    const iframe = document.querySelector('main iframe');
+                    if (iframe) {
+                        const checkElement = setInterval(() => {
+                            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                            const element = iframeDocument.querySelector(selector);
+                            if (element) {
+                                clearInterval(checkElement);
+                                clearInterval(checkIframe);
+                                resolve(element);
+                            }
+                        }, 100);
+                    }
+                }, 100);
+            });
         }
     
+        if (window.location.href.includes("cpanel")) {
+            html = await waitForIframeAndElement("#yw0")
+        }
+
         return html
     }
     
@@ -137,4 +148,50 @@ function reinstallClass() {
 
 application = new App(sets)
 
+function trackUrlChanges() {
+    let currentUrl = window.location.href;
 
+    const observer = new MutationObserver(() => {
+        if (currentUrl !== window.location.href) {
+
+            let href = window.location.href
+            if (currentUrl.includes("sales/view/id")) {application.interface.remove()}
+            application = false 
+            if (href.includes("sales/view/id")) {application = new App(sets)}
+            
+        }
+    });
+
+    // Наблюдаем за изменениями в документе
+    observer.observe(document, { childList: true, subtree: true });
+}
+
+// Запускаем отслеживание
+trackUrlChanges();
+
+// Функция для отслеживания изменений URL
+function trackUrlChanges() {
+    let currentUrl = window.location.href;
+
+    // Наблюдение за изменениями в документе
+    const observer = new MutationObserver(() => {
+
+        let href = window.location.href
+        if (currentUrl !== window.location.href & href.includes("sales/view/id")) console.log(href, currentUrl)
+
+        if (currentUrl !== window.location.href) {
+
+            if (!href.includes("sales/view/id")) {application.interface.remove()} 
+            else {{console.clear(); application = new App(sets)}}
+
+            currentUrl = window.location.href
+
+        }
+    });
+
+    observer.observe(document, { childList: true, subtree: true });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    trackUrlChanges();
+});
