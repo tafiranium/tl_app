@@ -177,14 +177,13 @@ function trackUrlChanges() {
     const observer = new MutationObserver(() => {
 
         let href = window.location.href
-        if (currentUrl !== window.location.href & href.includes("sales/view/id"))
 
-        if (currentUrl !== window.location.href) {
+        if (currentUrl !== href) {
 
             if (!href.includes("sales/view/id")) {application.interface.remove()} 
             else {{console.clear(); application = new App(sets)}}
 
-            currentUrl = window.location.href
+            currentUrl = href
 
         }
     });
