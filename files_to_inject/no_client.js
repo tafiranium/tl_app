@@ -55,11 +55,11 @@ class no_client {
             if (def[0]["name"]) {vp[def[1]["name"]] = seller} // имя продавца
 
             navigator.clipboard.writeText(this.format_uv(vp))
-                .then(() => {console.log(`Успешно скопировано в буфер обмена! (Не клиент)`)})
+                .then(() => {alert(`Успешно скопировано! (Не клиент)`)})
                 .catch(err => {
                     console.log("Ошибка", err)
                     navigator.clipboard.writeText(this.format_uv(vp))
-                        .then(() => {console.log(`Успешно скопировано в буфер обмена! (Не клиент)`)})
+                        .then(() => {alert(`Успешно скопировано! (Не клиент)`)})
                         .catch(err => {
                             console.log("Ошибка", err)
                         }); 
