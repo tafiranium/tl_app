@@ -55,12 +55,7 @@ class App {
     async main() {
 
         this.html = await this.get_html()
-
-        let FU_NAME = "main"
-        log("async function", `${FU_NAME}()`, [this.CLASS_NAME, FU_NAME])
-
         this.cfg = await this.get_file("settings.new").catch(err => {console.log("[App.main] GET_CONFIG_ERROR", err)})
-        log("config: ", this.cfg, [this.CLASS_NAME, FU_NAME])
 
         this.templates = {
             all_list: Object.assign({}, this.t("buyer"), this.t("market"), this.t("mobile"), this.t("takeup")),
@@ -73,29 +68,22 @@ class App {
         this.interface = new Interface()
         this.buttons = await this.interface.run(this.html)
 
-        log("this.buttons: ", this.buttons, [this.CLASS_NAME, FU_NAME])
 
         this.tables = new Tables(this.cfg, this.html)
         this.tables = await this.tables.get_all()
 
         this.all_tables_sorted = [this.tables[0], this.tables[1], this.tables[2]]
+        let nc = new no_client({"config": this.cfg, "table": this.all_tables_sorted})
+        await nc.connect(this.buttons[3])
 
         console.log(this.all_tables_sorted)
-        
-        log("All sorted tables: ", this.all_tables_sorted, [this.CLASS_NAME, FU_NAME])
 
         this.traffic  = this.all_tables_sorted[0]["traffic"]
         this.comment  = this.all_tables_sorted[0]["comment"]
         this.reasons  = this.all_tables_sorted[0]["reason"]
-        
-        log("this.traffic: ", this.all_tables_sorted[0]["traffic"], [this.CLASS_NAME, FU_NAME])
-        log("this.comment: ", this.all_tables_sorted[0]["comment"], [this.CLASS_NAME, FU_NAME])
-        log("this.reasons: ", this.all_tables_sorted[0]["reason"], [this.CLASS_NAME, FU_NAME])
 
         this.datetime = new VpTime()
         this.datetime = await this.datetime.run(this.all_tables_sorted[0]["datetime"].split(", "))
-        
-        log("this.datetime: ", this.datetime, [this.CLASS_NAME, FU_NAME])
 
         this.analysis     = new AnalIs()
         this.analis       = await this.analysis.run({
@@ -109,14 +97,10 @@ class App {
             deny:       this.deny
         })
 
-        log("this.analysis: ", this.analysis, [this.CLASS_NAME, FU_NAME])
-        log("this.analis: ",   this.analis,   [this.CLASS_NAME, FU_NAME])
 
         this.uv_turn      = this.analysis.uv_turn 
         this.type_of_page = this.analis[0]
 
-        log("this.uv_turn: ", this.uv_turn, [this.CLASS_NAME, FU_NAME])
-        log("this.type_of_page: ", this.type_of_page, [this.CLASS_NAME, FU_NAME])
 
         this.copy_class = new CopyConnect()
         await this.copy_class.run({
@@ -135,8 +119,6 @@ class App {
             templates:         this.templates
 
         })
-
-        log("this.copy_class: ", this.copy_class, [this.CLASS_NAME, FU_NAME])
     }
 }
 
