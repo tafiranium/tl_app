@@ -144,11 +144,13 @@ class AnalIs {
 
             items.forEach(e => {
                 if (temp[3] == 1) {
-                    if (!(this.cfg["stop"].includes(e.art))) {
-                        desc.push(e.name); arts.push(e.art); if (e.is_good) {count+=Number(e.count);}
+                    if (!(this.cfg["stop"].includes(e.art)) || (e.art == 0 & e.name == "Клиентский заказ")) {
+                        desc.push(e.name); 
+                        if (e.art != 0) {arts.push(e.art);}; 
+                        if (e.is_good || e.name == "Клиентский заказ") {count+=Number(e.count);}
                     }
                 } else if (temp[3] == -1) {
-                    desc.push(e.name); arts.push(e.art); if (e.is_good) {count+=Number(e.count)};
+                    desc.push(e.name); arts.push(e.art); if (e.is_good || e.name == "Клиентский заказ") {count+=Number(e.count)};
                 }
             }); 
             
