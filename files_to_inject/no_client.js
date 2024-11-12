@@ -46,6 +46,7 @@ class no_client {
 
             if (def[0]["date"]) {vp[def[1]["date"]] = tm[1]} // дата   
             if (def[0]["time"]) {vp[def[1]["time"]] = tm[2]} // время 
+            vp[4] = 0
 
             let seller = table[0]["seller"].trim().split(" ").filter((e) => !e.includes("-")).join(" ")
             let seller_hash = btoa(unescape(encodeURIComponent(seller)))
