@@ -55,6 +55,7 @@ class Interface {
             "app_sbp": ["Сбп</br>Alt+A", {}],
             "app_dop": ["Допродажа</br>Alt+W", {}],
             "app_dc": ["Дк</br>Alt+Q", {}],
+            "app_no_client": ["Не клиент", {}],
             "app_cut": ["Убрать копейки", {}],
             "app_telegram": ["Новости", {}],
             "app_error": ["Отчет об ошибке", {}]
@@ -76,13 +77,13 @@ class Interface {
           let mass = [buttons_list["app_dc"], buttons_list["app_sbp"], buttons_list["app_dop"], buttons_list["app_cut"]]
           let all = [
              buttons_list["app_icon"],  buttons_list["app_copy_button"], buttons_list["app_dop"], 
-             buttons_list["app_sbp"],   buttons_list["app_dc"],          buttons_list["app_cut"],  
+             buttons_list["app_sbp"], buttons_list["app_dc"], buttons_list["app_cut"], buttons_list["app_no_client"], 
              buttons_list["app_error"], buttons_list["app_telegram"]
           ]  
 
           let disp_el = [
             buttons_list["app_copy_button"], buttons_list["app_dop"], 
-            buttons_list["app_sbp"],   buttons_list["app_dc"],          buttons_list["app_cut"],  
+            buttons_list["app_sbp"], buttons_list["app_dc"], buttons_list["app_cut"], buttons_list["app_no_client"],  
             buttons_list["app_error"], buttons_list["app_telegram"]
          ]  
 
@@ -147,14 +148,14 @@ class Interface {
             window.open('https://t.me/+WBv4WSieLmwwMjZi');
           })
           
-          let second_mass = ["app_copy_button", "app_telegram", "app_error"].map(i => {return buttons_list[i]})
+          let second_mass = ["app_copy_button", "app_telegram", "app_error", "app_no_client"].map(i => {return buttons_list[i]})
           let move = [["mouseover", border_second_color], ["mouseout",  text_color]]
           move.forEach(el => {second_mass.forEach((e) => {e.addEventListener(el[0], () => {e.style.color = el[1]})});})
 
           return [
             buttons_list["app_copy_button"], 
             [buttons_list["app_sbp"], buttons_list["app_dc"], buttons_list["app_dop"], buttons_list["app_cut"]], 
-            buttons_list["app_icon"]
+            buttons_list["app_icon"], buttons_list["app_no_client"]
           ]
     }
 
