@@ -108,6 +108,9 @@ class Interface {
             this.ToggleCheck(e, [border_color, border_second_color])
             if (!this.check(e)) e.style.borderBottom = "solid 3px " + border_second_color
           })});
+        
+          this.ToggleCheck(buttons_list["app_cut"], [border_color, border_second_color])
+          if (!this.check(buttons_list["app_cut"])) buttons_list["app_cut"].style.borderBottom = "solid 3px " + border_second_color
           
           [["mouseover", border_second_color, border_second_color],
            ["mouseout",  border_color,        text_color]].forEach(el => {
